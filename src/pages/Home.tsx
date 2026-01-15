@@ -31,16 +31,28 @@ export function Home() {
             </section>
 
             <section className="py-20 px-6 md:px-12">
-                <h2 className="text-3xl font-bold mb-12 border-l-4 border-white pl-4">Featured Projects</h2>
+                <motion.h2
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                    className="text-3xl font-bold mb-12 border-l-4 border-white pl-4"
+                >
+                    Featured Projects
+                </motion.h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {[
                         { title: "Structural Architecture", image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800", desc: "Form follows function" },
                         { title: "Fluid Architecture", image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&q=80&w=800", desc: "Organic shapes" },
                         { title: "Interior Designs", image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=800", desc: "Living spaces" },
-                        { title: "Floor Plans & Elevations", image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80&w=800", desc: "Technical precision" }
+                        { title: "Floor Plans & MEP", image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80&w=800", desc: "Technical precision" }
                     ].map((item, index) => (
                         <motion.div
                             key={index}
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: index * 0.1 }}
                             whileHover={{ y: -10 }}
                             className="aspect-[4/3] rounded-sm relative overflow-hidden group cursor-pointer"
                         >
@@ -62,6 +74,30 @@ export function Home() {
                         </motion.div>
                     ))}
                 </div>
+            </section>
+
+            <section className="py-20 px-6 md:px-12 bg-black/30">
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                    className="max-w-4xl mx-auto"
+                >
+                    <h2 className="text-3xl font-bold mb-8 text-center">Experience SquaresNCubes</h2>
+                    <div className="aspect-video w-full rounded-lg overflow-hidden border border-white/10 shadow-2xl">
+                        <iframe
+                            width="100%"
+                            height="100%"
+                            src="https://www.youtube.com/embed/kLfOed3kp_8"
+                            title="SquaresNCubes Video"
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="w-full h-full"
+                        ></iframe>
+                    </div>
+                </motion.div>
             </section>
         </Layout>
     );

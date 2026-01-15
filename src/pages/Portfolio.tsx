@@ -32,6 +32,27 @@ const processProjects = (files: Record<string, any>, category: string, defaultIm
     }, {} as Record<string, any>);
 };
 
+// Helper for single image projects (Architecture, Fluid Arch)
+const processSingleImageProjects = (files: Record<string, any>, category: string) => {
+    return Object.entries(files).map(([path, url], index) => {
+        const fileName = path.split('/').pop() || `Project ${index}`;
+        const title = decodeURIComponent(fileName).replace(/\.(png|jpg|jpeg)$/i, '');
+
+        return {
+            id: `${category}-${index}`,
+            title: title,
+            category: category,
+            image: url as string,
+            size: 'md:col-span-1 md:row-span-1', // Default size
+            files: [{
+                name: title,
+                url: url as string,
+                type: 'image'
+            }]
+        };
+    });
+};
+
 // Load Floor Plan files
 const floorPlanFiles = import.meta.glob('../assets/portfolio/floorplans_mep/*/*.(png|jpg|jpeg)', {
     eager: true,
@@ -46,18 +67,34 @@ const interiorFiles = import.meta.glob('../assets/portfolio/interiors/*/*.(png|j
     import: 'default'
 });
 
+// Load Architecture files
+const architectureFiles = import.meta.glob('../assets/portfolio/architecture/*.(png|jpg|jpeg)', {
+    eager: true,
+    query: '?url',
+    import: 'default'
+});
+
+// Load Fluid Architecture files
+const fluidArchFiles = import.meta.glob('../assets/portfolio/fluid_arch/*.(png|jpg|jpeg)', {
+    eager: true,
+    query: '?url',
+    import: 'default'
+});
+
+
 const floorPlanProjects = processProjects(floorPlanFiles, 'Floor Plans & MEP');
 const interiorProjects = processProjects(interiorFiles, 'Interior Designs');
+const architectureProjects = processSingleImageProjects(architectureFiles, 'Architectural');
+const fluidArchProjects = processSingleImageProjects(fluidArchFiles, 'Fluid Structures');
 
-const existingProjects = [
-    { id: 1, title: 'Azure Skyline', category: 'Architectural', image: 'https://images.unsplash.com/photo-1600596542815-2a4d9fdd4070?auto=format&fit=crop&q=80&w=800', size: 'md:col-span-2 md:row-span-2' },
-    // Removed hardcoded Interiors to prefer dynamic ones if needed, or keep them if they are distinct. 
-    // Keeping them for now as they have specific data.
-    { id: 3, title: 'Cube Residence', category: 'Architectural', image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=800', size: 'md:col-span-1 md:row-span-2' },
-    { id: 5, title: 'Flux Museum', category: 'Fluid Structures', image: 'https://images.unsplash.com/photo-1577493340887-b7bfff550145?auto=format&fit=crop&q=80&w=800', size: 'md:col-span-2 md:row-span-1' },
-    { id: 6, title: 'Neo Villa', category: 'Architectural', image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800', size: 'md:col-span-1 md:row-span-1' },
-    { id: 7, title: 'Zenith Tower', category: 'Fluid Structures', image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800', size: 'md:col-span-1 md:row-span-2' },
-    { id: 8, title: 'Echo Pavilion', category: 'Fluid Structures', image: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&q=80&w=800', size: 'md:col-span-2 md:row-span-2' },
+const walkthroughVideos = [
+    { id: 'vid1', title: 'Apartment Design', url: 'https://www.youtube.com/watch?v=XspshIVFdLs', thumbnail: 'https://img.youtube.com/vi/XspshIVFdLs/maxresdefault.jpg', category: 'Walkthrough videos' },
+    { id: 'vid2', title: 'Bedroom Design', url: 'https://www.youtube.com/watch?v=EmK34Q297xY', thumbnail: 'https://img.youtube.com/vi/EmK34Q297xY/maxresdefault.jpg', category: 'Walkthrough videos' },
+    { id: 'vid3', title: 'Terrace Garden', url: 'https://www.youtube.com/watch?v=9n4qfTSeg5E', thumbnail: 'https://img.youtube.com/vi/9n4qfTSeg5E/maxresdefault.jpg', category: 'Walkthrough videos' },
+    { id: 'vid4', title: 'Dinning and Kitchen Design', url: 'https://www.youtube.com/watch?v=bPtgRB_MfbU', thumbnail: 'https://img.youtube.com/vi/bPtgRB_MfbU/maxresdefault.jpg', category: 'Walkthrough videos' },
+    { id: 'vid5', title: 'Spa & Saloon', url: 'https://www.youtube.com/watch?v=u3vDaliM64g', thumbnail: 'https://img.youtube.com/vi/u3vDaliM64g/maxresdefault.jpg', category: 'Walkthrough videos' },
+    { id: 'vid6', title: 'Minimal Spa & Salon Design', url: 'https://www.youtube.com/watch?v=eLnIUgQQujU', thumbnail: 'https://img.youtube.com/vi/eLnIUgQQujU/maxresdefault.jpg', category: 'Walkthrough videos' },
+    { id: 'vid7', title: 'School Design', url: 'https://www.youtube.com/watch?v=kLfOed3kp_8', thumbnail: 'https://img.youtube.com/vi/kLfOed3kp_8/maxresdefault.jpg', category: 'Walkthrough videos' },
 ];
 
 // Helper to shuffle array
@@ -71,12 +108,13 @@ const shuffleArray = (array: any[]) => {
 };
 
 const allProjects = shuffleArray([
-    ...existingProjects,
     ...Object.values(floorPlanProjects),
-    ...Object.values(interiorProjects)
+    ...Object.values(interiorProjects),
+    ...architectureProjects,
+    ...fluidArchProjects
 ]);
 
-const categories = ['All', 'Architectural', 'Fluid Structures', 'Interior Designs', 'Floor Plans & MEP'];
+const categories = ['All', 'Architectural', 'Fluid Structures', 'Interior Designs', 'Floor Plans & MEP', 'Walkthrough videos'];
 
 export function Portfolio() {
     const [filter, setFilter] = useState('All');
@@ -85,7 +123,9 @@ export function Portfolio() {
 
     const filteredProjects = filter === 'All'
         ? allProjects
-        : allProjects.filter(p => p.category === filter);
+        : filter === 'Walkthrough videos'
+            ? walkthroughVideos
+            : allProjects.filter(p => p.category === filter);
 
     return (
         <Layout>
@@ -119,9 +159,9 @@ export function Portfolio() {
 
                 <motion.div
                     layout
-                    className="grid grid-cols-1 md:grid-cols-4 auto-rows-[300px] gap-4"
+                    className={`grid gap-4 ${filter === 'Walkthrough videos' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 md:grid-cols-4 auto-rows-[300px]'}`}
                 >
-                    <AnimatePresence>
+                    <AnimatePresence mode='popLayout'>
                         {filteredProjects.map((project: any) => (
                             <motion.div
                                 layout
@@ -130,14 +170,23 @@ export function Portfolio() {
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.9 }}
                                 transition={{ duration: 0.4 }}
-                                onClick={() => project.files ? setSelectedProject(project) : null}
+                                onClick={() => {
+                                    if (project.category === 'Walkthrough videos') {
+                                        // Open video logic (simple new tab or modal - let's do new tab for now as quick fix, or better, reuse modal?)
+                                        // The modal expects 'files', video projects don't have files array structured same way.
+                                        // Let's just open in new tab for simplicity as user just asked for "video cards" with links.
+                                        window.open(project.url, '_blank');
+                                    } else if (project.files) {
+                                        setSelectedProject(project);
+                                    }
+                                }}
                                 className={cn(
                                     "group relative overflow-hidden rounded-md cursor-pointer",
-                                    project.size
+                                    project.size || 'aspect-video'
                                 )}
                             >
                                 <motion.img
-                                    src={project.image}
+                                    src={project.image || project.thumbnail}
                                     alt={project.title}
                                     className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110"
                                     loading="lazy"
@@ -153,6 +202,13 @@ export function Portfolio() {
                                         <h3 className="text-2xl font-bold text-white">{project.title}</h3>
                                     </div>
                                 </div>
+                                {project.category === 'Walkthrough videos' && (
+                                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                        <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 group-hover:scale-110 transition-transform">
+                                            <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[20px] border-l-white border-b-[10px] border-b-transparent ml-1" />
+                                        </div>
+                                    </div>
+                                )}
                             </motion.div>
                         ))}
                     </AnimatePresence>

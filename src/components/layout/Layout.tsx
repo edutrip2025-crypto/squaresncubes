@@ -20,8 +20,7 @@ export function Layout({ children }: LayoutProps) {
                     <div className="space-y-4">
                         <h3 className="text-2xl font-bold tracking-tighter">Squares<span className="text-gray-500">N</span>Cubes</h3>
                         <p className="text-gray-400 text-sm max-w-xs leading-relaxed">
-                            Designing spaces that inspire and function with precision. <br />
-                            Bengaluru • Hyderabad
+                            Designing spaces that inspire and function with precision.
                         </p>
                     </div>
 
@@ -62,8 +61,8 @@ export function Layout({ children }: LayoutProps) {
                 </div>
 
                 <div className="max-w-7xl mx-auto pt-8 border-t border-white/5 mt-12 text-xs text-gray-600 flex justify-between items-center">
-                    <span>© 2026 SquaresNCubes. All rights reserved.</span>
-                    <span className="opacity-50">Est. 2026</span>
+                    <span>© 2024 SquaresNCubes. All rights reserved.</span>
+                    <span className="opacity-50">Hyderabad | Bangalore</span>
                 </div>
             </footer>
         </div>
