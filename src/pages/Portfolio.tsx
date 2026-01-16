@@ -1,131 +1,38 @@
 import { Layout } from '../components/layout/Layout';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { cn } from '../lib/utils';
 import { ArrowUpRight, X, Image as ImageIcon } from 'lucide-react';
-
-// Helper to process project files
-const processProjects = (files: Record<string, any>, category: string, defaultImageSize: string = 'md:col-span-1 md:row-span-1') => {
-    return Object.entries(files).reduce((acc, [path, url]) => {
-        const parts = path.split('/');
-        const folderName = parts[parts.length - 2];
-        const fileName = parts[parts.length - 1];
-
-        if (!acc[folderName]) {
-            acc[folderName] = {
-                id: folderName,
-                title: folderName,
-                category: category,
-                image: url as string, // Default cover is the first image found
-                size: defaultImageSize,
-                files: []
-            };
-        }
-
-        acc[folderName].files.push({
-            name: decodeURIComponent(fileName).replace(/\.(png|jpg|jpeg)$/i, ''),
-            url: url as string,
-            type: 'image'
-        });
-
-        return acc;
-    }, {} as Record<string, any>);
-};
-
-// Helper for single image projects (Architecture, Fluid Arch)
-const processSingleImageProjects = (files: Record<string, any>, category: string) => {
-    return Object.entries(files).map(([path, url], index) => {
-        const fileName = path.split('/').pop() || `Project ${index}`;
-        const title = decodeURIComponent(fileName).replace(/\.(png|jpg|jpeg)$/i, '');
-
-        return {
-            id: `${category}-${index}`,
-            title: title,
-            category: category,
-            image: url as string,
-            size: 'md:col-span-1 md:row-span-1', // Default size
-            files: [{
-                name: title,
-                url: url as string,
-                type: 'image'
-            }]
-        };
-    });
-};
-
-// Load Floor Plan files
-const floorPlanFiles = import.meta.glob('../assets/portfolio/floorplans_mep/*/*.(png|jpg|jpeg)', {
-    eager: true,
-    query: '?url',
-    import: 'default'
-});
-
-// Load Interior Design files
-const interiorFiles = import.meta.glob('../assets/portfolio/interiors/*/*.(png|jpg|jpeg)', {
-    eager: true,
-    query: '?url',
-    import: 'default'
-});
-
-// Load Architecture files
-const architectureFiles = import.meta.glob('../assets/portfolio/architecture/*.(png|jpg|jpeg)', {
-    eager: true,
-    query: '?url',
-    import: 'default'
-});
-
-// Load Fluid Architecture files
-const fluidArchFiles = import.meta.glob('../assets/portfolio/fluid_arch/*.(png|jpg|jpeg)', {
-    eager: true,
-    query: '?url',
-    import: 'default'
-});
-
-
-const floorPlanProjects = processProjects(floorPlanFiles, 'Floor Plans & MEP');
-const interiorProjects = processProjects(interiorFiles, 'Interior Designs');
-const architectureProjects = processSingleImageProjects(architectureFiles, 'Architectural');
-const fluidArchProjects = processSingleImageProjects(fluidArchFiles, 'Fluid Structures');
-
-const walkthroughVideos = [
-    { id: 'vid1', title: 'Apartment Design', url: 'https://www.youtube.com/watch?v=XspshIVFdLs', thumbnail: 'https://img.youtube.com/vi/XspshIVFdLs/maxresdefault.jpg', category: 'Walkthrough videos' },
-    { id: 'vid2', title: 'Bedroom Design', url: 'https://www.youtube.com/watch?v=EmK34Q297xY', thumbnail: 'https://img.youtube.com/vi/EmK34Q297xY/maxresdefault.jpg', category: 'Walkthrough videos' },
-    { id: 'vid3', title: 'Terrace Garden', url: 'https://www.youtube.com/watch?v=9n4qfTSeg5E', thumbnail: 'https://img.youtube.com/vi/9n4qfTSeg5E/maxresdefault.jpg', category: 'Walkthrough videos' },
-    { id: 'vid4', title: 'Dinning and Kitchen Design', url: 'https://www.youtube.com/watch?v=bPtgRB_MfbU', thumbnail: 'https://img.youtube.com/vi/bPtgRB_MfbU/maxresdefault.jpg', category: 'Walkthrough videos' },
-    { id: 'vid5', title: 'Spa & Saloon', url: 'https://www.youtube.com/watch?v=u3vDaliM64g', thumbnail: 'https://img.youtube.com/vi/u3vDaliM64g/maxresdefault.jpg', category: 'Walkthrough videos' },
-    { id: 'vid6', title: 'Minimal Spa & Salon Design', url: 'https://www.youtube.com/watch?v=eLnIUgQQujU', thumbnail: 'https://img.youtube.com/vi/eLnIUgQQujU/maxresdefault.jpg', category: 'Walkthrough videos' },
-    { id: 'vid7', title: 'School Design', url: 'https://www.youtube.com/watch?v=kLfOed3kp_8', thumbnail: 'https://img.youtube.com/vi/kLfOed3kp_8/maxresdefault.jpg', category: 'Walkthrough videos' },
-];
-
-// Helper to shuffle array
-const shuffleArray = (array: any[]) => {
-    const newArray = [...array];
-    for (let i = newArray.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-    }
-    return newArray;
-};
-
-const allProjects = shuffleArray([
-    ...Object.values(floorPlanProjects),
-    ...Object.values(interiorProjects),
-    ...architectureProjects,
-    ...fluidArchProjects
-]);
-
-const categories = ['All', 'Architectural', 'Fluid Structures', 'Interior Designs', 'Floor Plans & MEP', 'Walkthrough videos'];
+import { allProjects, walkthroughVideos, categories, getProjectById } from '../lib/projectData';
 
 export function Portfolio() {
     const [filter, setFilter] = useState('All');
     const [selectedProject, setSelectedProject] = useState<any>(null);
+    const [selectedVideo, setSelectedVideo] = useState<any>(null);
     const [previewFile, setPreviewFile] = useState<any>(null);
+    const [searchParams] = useSearchParams();
+
+    useEffect(() => {
+        const projectId = searchParams.get('project');
+        if (projectId) {
+            const project = getProjectById(projectId);
+            if (project) {
+                if (project.category === 'Walkthrough videos') {
+                    setSelectedVideo(project);
+                } else {
+                    setSelectedProject(project);
+                }
+            }
+        }
+    }, [searchParams]);
+
 
     const filteredProjects = filter === 'All'
         ? allProjects
         : filter === 'Walkthrough videos'
             ? walkthroughVideos
-            : allProjects.filter(p => p.category === filter);
+            : allProjects.filter((p: any) => p.category === filter);
 
     return (
         <Layout>
@@ -172,10 +79,7 @@ export function Portfolio() {
                                 transition={{ duration: 0.4 }}
                                 onClick={() => {
                                     if (project.category === 'Walkthrough videos') {
-                                        // Open video logic (simple new tab or modal - let's do new tab for now as quick fix, or better, reuse modal?)
-                                        // The modal expects 'files', video projects don't have files array structured same way.
-                                        // Let's just open in new tab for simplicity as user just asked for "video cards" with links.
-                                        window.open(project.url, '_blank');
+                                        setSelectedVideo(project);
                                     } else if (project.files) {
                                         setSelectedProject(project);
                                     }
@@ -264,6 +168,44 @@ export function Portfolio() {
                         </motion.div>
                     )}
                 </AnimatePresence>
+
+                {/* Video Modal */}
+                <AnimatePresence>
+                    {selectedVideo && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95 backdrop-blur-md"
+                            onClick={() => setSelectedVideo(null)}
+                        >
+                            <motion.div
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.9, opacity: 0 }}
+                                onClick={(e) => e.stopPropagation()}
+                                className="w-full max-w-5xl aspect-video bg-black rounded-lg overflow-hidden shadow-2xl border border-white/10 relative"
+                            >
+                                <button
+                                    className="absolute top-4 right-4 text-white p-2 bg-black/50 hover:bg-white/20 rounded-full transition-colors z-10 backdrop-blur-sm"
+                                    onClick={() => setSelectedVideo(null)}
+                                >
+                                    <X className="w-6 h-6" />
+                                </button>
+                                <iframe
+                                    width="100%"
+                                    height="100%"
+                                    src={`https://www.youtube.com/embed/${selectedVideo.videoId}?autoplay=1&rel=0`}
+                                    title={selectedVideo.title}
+                                    frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                ></iframe>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
 
                 {/* Lightbox / Preview Modal */}
                 <AnimatePresence>

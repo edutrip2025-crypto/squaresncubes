@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import { Home } from './pages/Home';
 import { Portfolio } from './pages/Portfolio';
 import { Services } from './pages/Services';
@@ -26,7 +26,7 @@ function App() {
   }, []);
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <AnimatePresence mode="wait">
         {loading && <SplashScreen onComplete={() => setLoading(false)} />}
       </AnimatePresence>
@@ -42,7 +42,7 @@ function App() {
           <Route path="*" element={<Home />} />
         </Routes>
       )}
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
