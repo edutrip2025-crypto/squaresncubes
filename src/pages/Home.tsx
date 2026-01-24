@@ -42,7 +42,7 @@ export function Home() {
                         initial={{ y: 50, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
-                        className="text-5xl md:text-8xl font-bold tracking-tighter mb-6"
+                        className="text-3xl sm:text-5xl md:text-8xl font-bold tracking-tighter mb-6"
                     >
                         SQUARES<span className="text-gray-500 font-light">N</span>CUBES
                     </motion.h1>
