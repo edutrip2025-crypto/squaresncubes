@@ -41,7 +41,7 @@ export default async function handler(req, res) {
     try {
         const mailOptions = {
             from: process.env.EMAIL_USER,
-            to: process.env.EMAIL_RECEIVER || 'enquiry@thesquaresncubes.com',
+            to: process.env.EMAIL_RECEIVER || 'enquiry@thesquaresncubes.in',
             subject: `New Contact Form Submission from ${name}`,
             text: `You have received a new message from the contact form.\n\nName: ${name}\nEmail: ${email}\nMessage:\n${message}`,
             html: `

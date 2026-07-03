@@ -39,9 +39,9 @@ export function Layout({ children }: LayoutProps) {
                         <div className="flex flex-col gap-4">
                             <span className="text-white font-semibold tracking-wide">Connect</span>
                             <div className="flex flex-col gap-3 text-gray-400">
-                                <a href="mailto:hello@thesquaresncubes.com" className="flex items-center gap-2 hover:text-white transition-colors group">
+                                <a href="mailto:hello@thesquaresncubes.in" className="flex items-center gap-2 hover:text-white transition-colors group">
                                     <Mail size={16} className="text-gray-500 group-hover:text-white transition-colors" />
-                                    <span>hello@thesquaresncubes.com</span>
+                                    <span>hello@thesquaresncubes.in</span>
                                 </a>
                                 <div className="flex items-center gap-2 group hover:text-white transition-colors cursor-default">
                                     <Phone size={16} className="text-gray-500 group-hover:text-white transition-colors" />

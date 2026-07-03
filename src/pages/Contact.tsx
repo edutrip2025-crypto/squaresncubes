@@ -25,7 +25,7 @@ export function Contact() {
                         </div>
                         <div>
                             <h3 className="font-bold text-white mb-2">Email</h3>
-                            <a href="mailto:hello@thesquaresncubes.com" className="text-gray-400 hover:text-white transition-colors">hello@thesquaresncubes.com</a>
+                            <a href="mailto:hello@thesquaresncubes.in" className="text-gray-400 hover:text-white transition-colors">hello@thesquaresncubes.in</a>
                         </div>
                         <div>
                             <h3 className="font-bold text-white mb-2">Phone</h3>
