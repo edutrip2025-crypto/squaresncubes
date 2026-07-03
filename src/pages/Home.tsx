@@ -75,9 +75,6 @@ function TiltCard({ title, desc, image, onClick }: TiltCardProps) {
                     className="absolute inset-0 flex flex-col justify-end p-8 md:p-12"
                     style={{ transform: "translateZ(40px)" }}
                 >
-                    <span className="text-yellow-400 font-mono text-xs tracking-widest uppercase mb-2 opacity-80 group-hover:opacity-100 transition-opacity">
-                        Explore Sector
-                    </span>
                     <h3 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4 group-hover:text-yellow-400 transition-colors">
                         {title}
                     </h3>
@@ -152,16 +149,6 @@ export function Home() {
 
             {/* Sectors (Residential & Commercial) Section */}
             <section className="py-20 px-6 md:px-12 relative max-w-7xl mx-auto w-full">
-                <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                    className="mb-12 border-l-4 border-white pl-4"
-                >
-                    <h2 className="text-3xl font-bold tracking-tight text-white uppercase">Sectors</h2>
-                    <p className="text-gray-400 text-sm mt-1">Innovative architectural design across diverse spaces and environments.</p>
-                </motion.div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {sectors.map((sector, index) => (
