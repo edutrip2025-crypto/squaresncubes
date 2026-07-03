@@ -123,3 +123,32 @@ export const getProjectById = (id: string, category?: string) => {
     }
     return allProjects.find((p: any) => p.id === id);
 };
+
+export const getProjectsBySector = (sector: 'Residential' | 'Commercial') => {
+    const residentialKeywords = [
+        'villa', 'apartment', 'duplex', 'house', 'bedroom', 'living', 'dining', 'kitchen', 'staircase', 'terrace', 'farm', 'home'
+    ];
+
+    const commercialKeywords = [
+        'office', 'restaurant', 'cafe', 'spa', 'saloon', 'salon', 'showroom', 'school', 'building', 'club house', 'student', 'commercial'
+    ];
+
+    return allProjects.filter((project: any) => {
+        const titleLower = (project.title || '').toLowerCase();
+        const idLower = (project.id || '').toLowerCase();
+        const categoryLower = (project.category || '').toLowerCase();
+
+        const isRes = residentialKeywords.some(keyword =>
+            titleLower.includes(keyword) || idLower.includes(keyword) || categoryLower.includes(keyword)
+        );
+        const isComm = commercialKeywords.some(keyword =>
+            titleLower.includes(keyword) || idLower.includes(keyword) || categoryLower.includes(keyword)
+        );
+
+        if (sector === 'Residential') {
+            return isRes || !isComm;
+        } else {
+            return isComm;
+        }
+    });
+};
