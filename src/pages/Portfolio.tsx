@@ -36,11 +36,16 @@ const enrichProject = (proj: any, sector: 'Residential' | 'Commercial') => {
     const floors = ["G+1", "G+2", "G+1", "Penthouse G+2", "G+1"];
     const years = ["2023", "2024", "2023", "2024", "2025"];
     
-    const area = areas[hash % areas.length];
+    const defaultArea = areas[hash % areas.length];
     const plot = plots[hash % plots.length];
-    const floor = floors[hash % floors.length];
+    const defaultFloor = floors[hash % floors.length];
     const year = years[hash % years.length];
-    const location = hash % 2 === 0 ? "Hyderabad, India" : "Bangalore, India";
+    const defaultLocation = hash % 2 === 0 ? "Hyderabad, India" : "Bangalore, India";
+
+    const area = proj.builtUpArea || defaultArea;
+    const floor = proj.floors || defaultFloor;
+    const location = proj.location || defaultLocation;
+    const projectType = proj.projectType || sector;
 
     const services = sector === 'Residential' 
         ? [
@@ -70,9 +75,9 @@ const enrichProject = (proj: any, sector: 'Residential' | 'Commercial') => {
         category: proj.category || sector,
         image: proj.image || images[0].url,
         description: proj.description || `A premium ${sector.toLowerCase()} design concept that merges modern aesthetic elements with state-of-the-art spatial functionality, custom built by SquaresNCubes.`,
-        overview: proj.overview || `This ${sector.toLowerCase()} project showcases cutting-edge architectural and interior layouts. Focused on delivering maximum lighting, natural cross-ventilation, and highly optimized space usage, this project blends premium materials with minimalist forms.`,
+        overview: proj.description || proj.overview || `This ${sector.toLowerCase()} project showcases cutting-edge architectural and interior layouts. Focused on delivering maximum lighting, natural cross-ventilation, and highly optimized space usage, this project blends premium materials with minimalist forms.`,
         metadata: [
-            { label: "Project Type", value: sector, icon: HomeIcon },
+            { label: "Project Type", value: projectType, icon: HomeIcon },
             { label: "Built-up Area", value: area, icon: Ruler },
             { label: "Location", value: location, icon: MapPin },
             { label: "Floors", value: floor, icon: Layers },

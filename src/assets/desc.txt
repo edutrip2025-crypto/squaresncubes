@@ -1,476 +1,219 @@
-Project Name:
+Project Name:2BHK Apartment
 
-Description:
+Description: Designed within the constraints of a 1,200 sq. ft. renovation, this home embraces an Indian minimal aesthetic with simplicity and warmth. Natural wood finishes, floral accents, and gentle lighting work together to transform a compact layout into a space that feels open, comfortable, and timeless.
 
-Project Type:
+Project Type: Residential
 
-Built-up Area:
+Built-up Area:1,200 Sq. Ft.
 
-Location:
+Location: Hyderabad,Telangana
 
-Floors:
+Floors: 2nd Floor
 
 
 
 
 
-Project Name:
+Project Name:3BHK Apartment
 
-Description:
+Description: A 1,750 sq. ft. home designed around the idea that every room can have its own identity without losing sight of the whole. Distinct themes, refined materials, and carefully curated details come together to create a modern luxury residence that feels cohesive, timeless, and complete.
 
-Project Type:
+Project Type: Residential
 
-Built-up Area:
+Built-up Area:1,750 Sq. Ft.
 
-Location:
+Location: Hyderabad, Telangana
 
-Floors:
+Floors: 7th Floor 
 
 
 
 
 
-Project Name:
+Project Name: British Manor
 
-Description:
+Description: Originally built over 200 years ago, this manor was thoughtfully restored to meet the needs of modern living while preserving its historic character. Architectural planning, MEP services, and interior spaces were carefully reconfigured without altering the exterior, allowing the home to retain its timeless presence while offering a refined, contemporary interpretation of a British residence.
 
-Project Type:
+Project Type: Residential
 
-Built-up Area:
+Built-up Area:980 Sq. Ft.
 
-Location:
+Location: Coventry, United Kingdom
 
-Floors:
+Floors: G+1
 
 
 
 
 
-Project Name:
+Project Name: Classic Indian
 
-Description:
+Description: A 4,750 sq. ft. residence envisioned as a celebration of Indian architectural heritage. Every material was thoughtfully handpicked from carved stone and rich timber to traditional open verandas, creating a home where craftsmanship, culture, and timeless design are woven into every space.
 
-Project Type:
+Project Type: Residential
 
-Built-up Area:
+Built-up Area: 4,750 Sq. Ft
 
-Location:
+Location: Raichur, Karnataka
 
-Floors:
+Floors: G+1
 
 
 
 
 
-Project Name:
+Project Name: Indian Contemporary
 
-Description:
+Description: A home that brings together contemporary design and the everyday needs of an Indian family. Minimal forms, abundant natural light, and thoughtfully planned spaces create an environment that feels bright, open, and effortlessly functional, where simplicity becomes the defining element of luxury.
 
-Project Type:
+Project Type: Residential
 
-Built-up Area:
+Built-up Area: 2,450 Sq. Ft
 
-Location:
+Location: Pune, Maharashtra 
 
-Floors:
+Floors: G+1
 
 
 
 
 
-Project Name:
+Project Name: Modern Luxury House
 
-Description:
+Description: A modern residence shaped by simplicity, proportion, and natural light. Refined materials, carefully composed interiors, and a seamless flow between spaces create a home that is both visually understated and thoughtfully designed for everyday living.
 
-Project Type:
+Project Type: Residential
 
-Built-up Area:
+Built-up Area: 3,650 Sq. Ft
 
-Location:
+Location: Hyderabad, Telangana
 
-Floors:
+Floors:G+2
 
 
 
 
 
-Project Name:
+Project Name: Tropical Villa
 
-Description:
+Description: Envisioned as a home immersed in nature, this tropical villa is centred around a cascading water feature that extends from the terrace to the ground level, bringing movement and tranquillity into the architecture. Each bedroom opens to its own balcony and landscaped yard, blurring the boundary between indoors and outdoors to create a home with the comfort and character of a resort.
 
-Project Type:
+Project Type: Residential
 
-Built-up Area:
+Built-up Area:5,250 Sq. Ft
 
-Location:
+Location: Mumbai, Maharashtra 
 
-Floors:
+Floors: G+1
 
 
 
 
 
-Project Name:
+Project Name: Cafe
 
-Description:
+Description: A renovation of a compact café in Birmingham, UK, designed to transform an existing shop into a vibrant and contemporary destination. Bold colours, carefully composed materials, and expressive architectural elements bring character to every corner, proving that even a modest space can leave a lasting impression and offer its own unique artistic identity.
 
-Project Type:
+Project Type: Commercial
 
-Built-up Area:
+Built-up Area: 1,632 Sq. Ft
 
-Location:
+Location: Birmingham, United Kingdom
 
-Floors:
+Floors: Ground Floor
 
 
 
 
 
-Project Name:
+Project Name: Office
 
-Description:
+Description: Designed for a team of nearly 30, this studio moves away from the conventional corporate office to create a workplace that feels calm, welcoming, and inspiring. Soft materials, warm lighting, and thoughtfully planned collaborative spaces foster creativity, making the studio an environment where ideas can grow as naturally as the people who work within it.
 
-Project Type:
+Project Type: Commercial
 
-Built-up Area:
+Built-up Area: 2,700 Sq. Ft
 
-Location:
+Location: Raipur, Chhattisgarh
 
-Floors:
+Floors: G+1
 
 
 
 
 
-Project Name:
+Project Name: Restaurant
 
-Description:
+Description: Designed for a residential setting in Goa, this project transforms dining into an architectural experience. At its heart, an artificial water feature brings movement, reflection, and serenity to the space, creating a distinctive identity that draws visitors beyond the food. The result is a restaurant where thoughtful design leaves a lasting impression long after the meal.
 
-Project Type:
+Project Type: Commercial
 
-Built-up Area:
+Built-up Area:  2,900 Sq. Ft
 
-Location:
+Location: Goa,India 
 
-Floors:
+Floors: G+1
 
 
 
 
 
-Project Name:
+Project Name: School Design
 
-Description:
+Description: A vision of contemporary educational campus, this project combines the character of a traditional school with the openness and functionality of an international learning environment. Double-height volumes, transparent glass façades, and open-to-sky circulation spaces shape a campus that is bright, connected, and designed to enrich the everyday experience of students and educators alike.
 
-Project Type:
+Project Type: Commercial
 
-Built-up Area:
+Built-up Area: 7,800 Sq. Ft
 
-Location:
+Location: Raichur, Karnataka
 
-Floors:
+Floors: G+1
 
 
 
 
 
-Project Name:
+Project Name: Spa
 
-Description:
+Description: Rooted in the idea of personalised wellness, this premium spa in Goa brings together privacy, comfort, and refined hospitality. Private sauna facilities within each massage suite, curated retail spaces, and dedicated photo areas elevate the guest experience, creating an atmosphere that feels calm, indulgent, and timeless.
 
-Project Type:
+Project Type: Commercial
 
-Built-up Area:
+Built-up Area: 1,700 Sq. Ft
 
-Location:
+Location: Goa, India
 
-Floors:
+Floors: G+1
 
 
 
 
 
-Project Name:
+Project Name: Studio Accommodation
 
-Description:
+Description: A compact one-room residence that explores the possibilities of efficient living through thoughtful planning and clean design. The seamless integration of the sleeping area, kitchenette, and bathroom creates a space that is simple, functional, and tailored to the needs of modern urban living.
 
-Project Type:
+Project Type: Commercial
 
-Built-up Area:
+Built-up Area: 480 Sq. Ft
 
-Location:
+Location: Coventry, United Kingdom
 
-Floors:
+Floors: G+14
 
 
 
 
 
-Project Name:
+Project Name: Studio Retreat
 
-Description:
+Description: Centred around a dramatic double-height volume, this residence transforms a compact layout into a home of openness and character. The elevated bedroom, connected by a single staircase, introduces the feeling of a G+1 home, creating a cosy retreat where simplicity, light, and spatial depth come together effortlessly.
 
-Project Type:
+Project Type: Commercial
 
-Built-up Area:
+Built-up Area: 520 Sq. Ft
 
-Location:
+Location: Coventry, United Kingdom
 
-Floors:
-
-
-
-
-
-Project Name:
-
-Description:
-
-Project Type:
-
-Built-up Area:
-
-Location:
-
-Floors:
-
-
-
-
-
-Project Name:
-
-Description:
-
-Project Type:
-
-Built-up Area:
-
-Location:
-
-Floors:
-
-
-
-
-
-Project Name:
-
-Description:
-
-Project Type:
-
-Built-up Area:
-
-Location:
-
-Floors:
-
-
-
-
-
-Project Name:
-
-Description:
-
-Project Type:
-
-Built-up Area:
-
-Location:
-
-Floors:
-
-
-
-
-
-Project Name:
-
-Description:
-
-Project Type:
-
-Built-up Area:
-
-Location:
-
-Floors:
-
-
-
-
-
-Project Name:
-
-Description:
-
-Project Type:
-
-Built-up Area:
-
-Location:
-
-Floors:
-
-
-
-
-
-Project Name:
-
-Description:
-
-Project Type:
-
-Built-up Area:
-
-Location:
-
-Floors:
-
-
-
-
-
-Project Name:
-
-Description:
-
-Project Type:
-
-Built-up Area:
-
-Location:
-
-Floors:
-
-
-
-
-
-Project Name:
-
-Description:
-
-Project Type:
-
-Built-up Area:
-
-Location:
-
-Floors:
-
-
-
-
-
-Project Name:
-
-Description:
-
-Project Type:
-
-Built-up Area:
-
-Location:
-
-Floors:
-
-
-
-
-
-Project Name:
-
-Description:
-
-Project Type:
-
-Built-up Area:
-
-Location:
-
-Floors:
-
-
-
-
-
-Project Name:
-
-Description:
-
-Project Type:
-
-Built-up Area:
-
-Location:
-
-Floors:
-
-
-
-
-
-Project Name:
-
-Description:
-
-Project Type:
-
-Built-up Area:
-
-Location:
-
-Floors:
-
-
-
-
-
-Project Name:
-
-Description:
-
-Project Type:
-
-Built-up Area:
-
-Location:
-
-Floors:
-
-
-
-
-
-Project Name:
-
-Description:
-
-Project Type:
-
-Built-up Area:
-
-Location:
-
-Floors:
-
-
-
-
-
-Project Name:
-
-Description:
-
-Project Type:
-
-Built-up Area:
-
-Location:
-
-Floors:
-
+Floors: G+1
