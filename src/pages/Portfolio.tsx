@@ -98,13 +98,21 @@ export function Portfolio() {
     const commercialProjects = commercialRaw.map(p => enrichProject(p, 'Commercial')).filter(Boolean) as any[];
 
     // Sector State ('Residential' | 'Commercial')
-    const [activeSector, setActiveSector] = useState<'Residential' | 'Commercial'>('Residential');
+    const [activeSector, setActiveSector] = useState<'Residential' | 'Commercial'>(() => {
+        const sectorParam = searchParams.get('sector');
+        if (sectorParam === 'Commercial') return 'Commercial';
+        return 'Residential';
+    });
     
     // Active project list
     const currentProjects = activeSector === 'Residential' ? residentialProjects : commercialProjects;
 
     // Active project ID
-    const [activeProjectId, setActiveProjectId] = useState(residentialProjects[0]?.id || "");
+    const [activeProjectId, setActiveProjectId] = useState(() => {
+        const sectorParam = searchParams.get('sector');
+        const projList = sectorParam === 'Commercial' ? commercialProjects : residentialProjects;
+        return projList[0]?.id || "";
+    });
 
     // Current active project object
     const activeProject = currentProjects.find(p => p.id === activeProjectId) || currentProjects[0] || { id: "", title: "", description: "", overview: "", metadata: [], services: [], files: [] };
@@ -148,7 +156,9 @@ export function Portfolio() {
 
     // Handle search query param from homepage redirects
     useEffect(() => {
+        const sectorParam = searchParams.get('sector');
         const projectId = searchParams.get('project');
+
         if (projectId) {
             const resProj = residentialProjects.find(p => p.id === projectId);
             if (resProj) {
@@ -162,7 +172,15 @@ export function Portfolio() {
                 setActiveSector('Commercial');
                 setActiveProjectId(commProj.id);
                 setCarouselIndex(0);
+                return;
             }
+        }
+
+        if (sectorParam === 'Residential' || sectorParam === 'Commercial') {
+            setActiveSector(sectorParam);
+            const defaultProj = sectorParam === 'Residential' ? residentialProjects[0] : commercialProjects[0];
+            setActiveProjectId(defaultProj?.id || "");
+            setCarouselIndex(0);
         }
     }, [searchParams]);
 

@@ -1,10 +1,8 @@
 import { Layout } from '../components/layout/Layout';
-import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'framer-motion';
+import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import { CubeScene } from '../components/3d/CubeScene';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, X } from 'lucide-react';
-import { getProjectsBySector } from '../lib/projectData';
+import { ArrowRight } from 'lucide-react';
 
 interface TiltCardProps {
     title: string;
@@ -94,7 +92,6 @@ function TiltCard({ title, desc, image, onClick }: TiltCardProps) {
 
 export function Home() {
     const navigate = useNavigate();
-    const [expandedSector, setExpandedSector] = useState<'Residential' | 'Commercial' | null>(null);
 
     const sectors = [
         { 
@@ -110,15 +107,6 @@ export function Home() {
             desc: "Cutting-edge corporate offices, retail spaces, restaurants, educational institutes, and sustainable commercial structures." 
         }
     ];
-
-    const handleProjectClick = (projectId: string) => {
-        navigate(`/portfolio?project=${projectId}`);
-    };
-
-    const getSectorProjects = (sector: 'Residential' | 'Commercial') => {
-        const projects = getProjectsBySector(sector);
-        return projects.slice(0, 6); // Top 6 projects
-    };
 
     return (
         <Layout>
@@ -163,67 +151,11 @@ export function Home() {
                                 title={sector.title}
                                 desc={sector.desc}
                                 image={sector.image}
-                                onClick={() => setExpandedSector(sector.sectorId)}
+                                onClick={() => navigate(`/portfolio?sector=${sector.sectorId}`)}
                             />
                         </motion.div>
                     ))}
                 </div>
-
-                {/* Expanded Sector Modal */}
-                <AnimatePresence>
-                    {expandedSector && (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="fixed inset-0 z-50 flex items-center justify-end bg-black/60 backdrop-blur-sm"
-                            onClick={() => setExpandedSector(null)}
-                        >
-                            <motion.div
-                                initial={{ x: '100%' }}
-                                animate={{ x: 0 }}
-                                exit={{ x: '100%' }}
-                                transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                                onClick={(e) => e.stopPropagation()}
-                                className="h-full w-full md:w-[500px] bg-zinc-900 border-l border-white/10 p-8 overflow-y-auto shadow-2xl"
-                            >
-                                <div className="flex justify-between items-center mb-8">
-                                    <h3 className="text-3xl font-bold text-white">{expandedSector} Projects</h3>
-                                    <button onClick={() => setExpandedSector(null)} className="p-2 hover:bg-white/10 rounded-full transition-colors">
-                                        <X className="w-6 h-6" />
-                                    </button>
-                                </div>
-
-                                <div className="space-y-6">
-                                    {getSectorProjects(expandedSector).map((project: any) => (
-                                        <motion.div
-                                            key={project.id}
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            className="group cursor-pointer relative overflow-hidden rounded-lg aspect-video border border-white/5 hover:border-white/20 transition-colors"
-                                            onClick={() => handleProjectClick(project.id)}
-                                        >
-                                            <img
-                                                src={project.image || project.thumbnail}
-                                                alt={project.title}
-                                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-80 group-hover:opacity-100"
-                                            />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent p-4 flex flex-col justify-end">
-                                                <h4 className="text-xl font-bold text-white">{project.title}</h4>
-                                                <div className="flex items-center gap-2 text-sm text-yellow-400 mt-1 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
-                                                    View Project <ArrowRight className="w-4 h-4" />
-                                                </div>
-                                            </div>
-                                        </motion.div>
-                                    ))}
-                                    {getSectorProjects(expandedSector).length === 0 && (
-                                        <p className="text-gray-400">No projects found in this sector.</p>
-                                    )}
-                                </div>
-                            </motion.div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
             </section>
         </Layout>
     );
