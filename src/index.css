@@ -173,10 +173,12 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .split-work-main { padding-bottom: 8px; }
   .split-work-views { border-left: 0; border-top: 1px solid #eef2e428; }
   .split-work-toolbar, .views-toolbar { height: 38px; flex: 0 0 38px; }
+  .split-work-toolbar > span, .views-toolbar > span { white-space: nowrap; }
   .split-work-toolbar nav { gap: 12px; }
   .main-project-stage, .view-stack { height: auto; min-height: 0; flex: 1 1 auto; }
-  .project-dots { left: 8px; top: auto; bottom: 48px; flex-direction: row; transform: none; }
-  .project-dots button { width: 34px; }
+  .project-dots { left: 8px; right: 8px; top: auto; bottom: 48px; width: auto; flex-direction: row; gap: 1px; overflow-x: auto; scrollbar-width: none; transform: none; }
+  .project-dots::-webkit-scrollbar { display: none; }
+  .project-dots button { flex: 0 0 23px; width: 23px; }
   .main-project-copy { left: 18px; right: 18px; bottom: 18px; }
   .main-project-copy h1 { max-width: 100%; margin-top: 8px; font-size: clamp(24px, 7vw, 38px); line-height: .94; overflow-wrap: anywhere; text-wrap: balance; }
   .main-project-copy small { margin-top: 12px; padding-top: 10px; }
