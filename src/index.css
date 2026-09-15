@@ -169,11 +169,16 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .pane-instruction-right strong::after { content: ' ↓'; color: #c8aa7c; }
 @media(max-width: 767px) {
   .split-work { height: auto; min-height: 0; padding-top: 76px; display: block; overflow: visible; }
-  .split-work-main, .split-work-views { height: calc(100svh - 76px); min-height: 570px; padding: 0 5% 18px; }
+  .split-work-main, .split-work-views { height: auto; min-height: 0; padding: 0 5% 26px; }
+  .split-work-main { padding-bottom: 30px; }
   .split-work-views { border-left: 0; border-top: 1px solid #eef2e428; }
+  .split-work-toolbar, .views-toolbar { height: 54px; }
   .split-work-toolbar nav { gap: 12px; }
-  .main-project-stage, .view-stack { height: calc(100% - 108px); }
-  .project-dots { left: 1px; }
+  .main-project-stage, .view-stack { height: auto; aspect-ratio: .86; }
+  .main-project-stage { min-height: 480px; }
+  .view-stack { min-height: 480px; }
+  .project-dots { left: 8px; top: auto; bottom: 76px; flex-direction: row; transform: none; }
+  .project-dots button { width: 34px; }
   .main-project-copy h1 { font-size: clamp(38px, 13vw, 62px); }
   .pane-instruction { height: 46px; }
 }
@@ -393,7 +398,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .route-curtain { position: fixed; inset: 0; background: #c8c5bb; z-index: 100; pointer-events: none; transform-origin: top; }
 a:focus-visible, button:focus-visible { outline: 2px solid #a9bfaa; outline-offset: 5px; }
 @media(max-width: 767px) {
-  .architecture-journey { height: 720svh; }
+  .architecture-journey { height: 900svh; }
   .architecture-title { top: 15%; left: 6%; }
   .architecture-title h1 { font-size: 67px; }
   .residence-canvas { inset: 0 -18%; }
