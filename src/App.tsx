@@ -1,48 +1,41 @@
-import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Home } from './pages/Home';
 import { Portfolio } from './pages/Portfolio';
 import { Services } from './pages/Services';
-import { About } from './pages/About';
 import { Contact } from './pages/Contact';
 import ScrollToTop from './components/ScrollToTop';
 
 import { useState } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
 import { SplashScreen } from './components/SplashScreen';
+
+function AnimatedRoutes() {
+  const location = useLocation();
+  return <AnimatePresence mode="wait" onExitComplete={() => window.scrollTo({ top: 0, behavior: 'instant' })}>
+    <motion.div key={location.pathname} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
+      <motion.div className="route-curtain" initial={{ scaleY: 1 }} animate={{ scaleY: 0 }} transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }} />
+      <Routes location={location}>
+        <Route path="/" element={<Home />} />
+        <Route path="/portfolio" element={<Portfolio />} />
+        <Route path="/services" element={<Services />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="*" element={<Home />} />
+      </Routes>
+    </motion.div>
+  </AnimatePresence>;
+}
 
 function App() {
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Keep context menu disable
-    const handleContextMenu = (e: MouseEvent) => {
-      e.preventDefault();
-    };
-    document.addEventListener('contextmenu', handleContextMenu);
-    return () => {
-      document.removeEventListener('contextmenu', handleContextMenu);
-    };
-  }, []);
-
   return (
-    <BrowserRouter>
+    <MotionConfig reducedMotion="user"><BrowserRouter>
       <AnimatePresence mode="wait">
         {loading && <SplashScreen onComplete={() => setLoading(false)} />}
       </AnimatePresence>
       <ScrollToTop />
-      {!loading && (
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/portfolio" element={<Portfolio />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          {/* Add other routes here later */}
-          <Route path="*" element={<Home />} />
-        </Routes>
-      )}
-    </BrowserRouter>
+      {!loading && <AnimatedRoutes />}
+    </BrowserRouter></MotionConfig>
   );
 }
 

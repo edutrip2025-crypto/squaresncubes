@@ -1,117 +1,74 @@
+import { motion } from 'framer-motion';
 import { Layout } from '../components/layout/Layout';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
-import { DraftingCompass, Ruler, Layers, BrickWall, Users, Briefcase } from 'lucide-react';
+import studioImage from '../assets/Commercial/Studio Retreat/A.png';
+import materialImage from '../assets/Residential/Classic Indian/A.png';
+
+const principles = [
+    ['01', 'Clarity before style', 'A strong idea should make every later decision simpler—from circulation to the smallest junction.'],
+    ['02', 'Material with purpose', 'We use texture, light, and craft to deepen an experience, never merely to decorate it.'],
+    ['03', 'Design as one team', 'Architecture, engineering, interiors, and delivery stay in dialogue from beginning to end.'],
+];
 
 export function About() {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const { scrollYProgress } = useScroll({ target: containerRef });
-    const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
-
     return (
         <Layout>
-            <div ref={containerRef} className="relative overflow-hidden">
-                {/* Hero Section */}
-                <section className="py-24 px-6 md:px-12 min-h-[60vh] flex flex-col justify-center relative">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                        className="max-w-4xl z-10"
-                    >
-                        <h1 className="text-5xl md:text-8xl font-bold mb-8 leading-tight">
-                            We build logic<br />
-                            <span className="text-gray-600">into dreams</span>.
-                        </h1>
-                        <p className="text-xl md:text-2xl text-gray-300 max-w-2xl leading-relaxed">
-                            SquaresNCubes sits at the intersection of rigid geometry and organic life.
-                            We don't just design buildings; we architect experiences.
-                        </p>
-                    </motion.div>
+            <section className="relative overflow-hidden px-5 pb-24 pt-36 md:px-10 md:pb-36 md:pt-48">
+                <div className="architectural-grid absolute inset-0 opacity-60" />
+                <div className="relative mx-auto max-w-[1500px]">
+                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="eyebrow">The studio</motion.p>
+                    <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16,1,0.3,1] }} className="display-serif mt-8 max-w-6xl text-balance text-6xl leading-[0.9] md:text-[8.5rem]">
+                        Logic into dreams. <em className="text-[#c8aa7c]">Dreams</em> into space.
+                    </motion.h1>
+                    <div className="mt-16 grid gap-10 border-t hairline pt-8 md:grid-cols-[0.8fr_1.2fr]">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/32">Squares N Cubes / India</p>
+                        <p className="max-w-2xl text-xl leading-8 text-white/60">We are a collaborative architecture and design studio working across residential, commercial, and hospitality environments. Geometry is our language; human experience is the measure.</p>
+                    </div>
+                </div>
+            </section>
 
-                    {/* Background Decorative Element */}
-                    <motion.div
-                        className="absolute right-0 top-20 opacity-10 pointer-events-none"
-                        style={{ y }}
-                    >
-                        <DraftingCompass size={400} strokeWidth={0.5} />
+            <section className="px-5 md:px-10">
+                <div className="mx-auto grid max-w-[1500px] gap-6 lg:grid-cols-[1.35fr_0.65fr] lg:items-end">
+                    <motion.div initial={{ clipPath: 'inset(0 0 100% 0)' }} whileInView={{ clipPath: 'inset(0 0 0% 0)' }} viewport={{ once: true }} transition={{ duration: 1.1, ease: [0.16,1,0.3,1] }} className="aspect-[16/10] overflow-hidden">
+                        <img src={studioImage} alt="Squares N Cubes studio retreat project" className="h-full w-full object-cover" />
                     </motion.div>
-                </section>
+                    <div className="border-t hairline pt-7 lg:pb-4">
+                        <span className="display-serif text-7xl text-[#c8aa7c]">11</span>
+                        <p className="mt-2 text-[11px] font-bold uppercase tracking-[0.16em] text-white/45">Architects and civil engineers working as one collective mind.</p>
+                    </div>
+                </div>
+            </section>
 
-                {/* Team Syndicate Section */}
-                <section className="py-20 px-6 md:px-12 bg-white/5 border-y border-white/5">
-                    <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <section className="px-5 py-28 md:px-10 md:py-40">
+                <div className="mx-auto max-w-[1500px]">
+                    <div className="grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
                         <div>
-                            <div className="flex items-center gap-3 text-sm font-mono text-blue-400 mb-4">
-                                <Users size={16} />
-                                <span>THE SYNDICATE</span>
-                            </div>
-                            <h2 className="text-3xl md:text-5xl font-bold mb-6">Collective Intelligence</h2>
-                            <p className="text-gray-400 text-lg leading-relaxed">
-                                We are a powerful syndicate of <strong>7 Architects</strong> and <strong>4 Civil Engineers</strong>,
-                                each a specialist in their own domain. From structural integrity to aesthetic fluidity,
-                                our diverse expertise converges to solve complex spatial problems. We work not as individuals,
-                                but as a single, cohesive mind dedicated to precision.
-                            </p>
+                            <p className="eyebrow">How we think</p>
+                            <p className="mt-6 max-w-xs text-sm leading-6 text-white/42">Our process is rigorous, but never rigid. These are the ideas that keep it grounded.</p>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                            {[1, 2, 3, 4].map((i) => (
-                                <div key={i} className="aspect-square bg-white/5 rounded-lg border border-white/5 flex items-center justify-center group hover:bg-white/10 transition-colors">
-                                    <Ruler className="text-gray-600 group-hover:text-white transition-colors" size={32} />
-                                </div>
+                        <div>
+                            {principles.map(([number, title, copy], index) => (
+                                <motion.div key={title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.08 }} className="grid gap-5 border-t hairline py-9 md:grid-cols-[0.15fr_0.75fr_1fr]">
+                                    <span className="text-[10px] tracking-[0.18em] text-[#c8aa7c]">{number}</span>
+                                    <h2 className="display-serif text-3xl">{title}</h2>
+                                    <p className="max-w-md text-sm leading-6 text-white/45">{copy}</p>
+                                </motion.div>
                             ))}
                         </div>
                     </div>
-                </section>
+                </div>
+            </section>
 
-                {/* Design Approach */}
-                <section className="py-24 px-6 md:px-12">
-                    <div className="max-w-4xl mx-auto">
-                        <div className="flex items-center gap-3 text-sm font-mono text-green-400 mb-4">
-                            <Briefcase size={16} />
-                            <span>OUR APPROACH</span>
-                        </div>
-                        <h2 className="text-3xl md:text-5xl font-bold mb-8">Professional Excellence</h2>
-                        <div className="prose prose-invert prose-lg text-gray-400">
-                            <p>
-                                Squares n' Cubes is a professional firm located in Hyderabad, India, that offers a wide range of architectural services, specializing in architectural design, construction, planning, and project management.
-                            </p>
-                            <p>
-                                We focus on creativity, quality, innovation, and sustainability, aiming to deliver high-quality and aesthetically pleasing designs that meet the diverse needs of our clients, including residential, commercial, and industrial projects.
-                            </p>
-                        </div>
+            <section className="relative min-h-[72vh] overflow-hidden">
+                <img src={materialImage} alt="Material-rich residential interior" className="absolute inset-0 h-full w-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/48 to-black/10" />
+                <div className="relative mx-auto flex min-h-[72vh] max-w-[1500px] items-end px-5 py-16 md:px-10 md:py-24">
+                    <div className="max-w-2xl">
+                        <p className="eyebrow">Material intelligence</p>
+                        <h2 className="display-serif mt-7 text-5xl leading-[0.95] md:text-7xl">Every surface has a job to do.</h2>
+                        <p className="mt-7 max-w-xl text-sm leading-7 text-white/65">We curate materials for performance, atmosphere, budget, and longevity—working with trusted makers and vendors across India to find the right balance for every project.</p>
                     </div>
-                </section>
-
-                {/* Material Selection */}
-                <section className="py-24 px-6 md:px-12 bg-gradient-to-b from-transparent to-black">
-                    <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16">
-                        <div className="order-2 md:order-1 relative">
-                            <div className="absolute inset-0 bg-blue-500/10 blur-3xl -z-10 rounded-full" />
-                            <Layers size={120} className="text-gray-800 mb-8" />
-                            <BrickWall size={80} className="text-gray-700 absolute top-20 right-20" />
-                        </div>
-                        <div className="order-1 md:order-2">
-                            <div className="flex items-center gap-3 text-sm font-mono text-purple-400 mb-4">
-                                <Layers size={16} />
-                                <span>MATERIALITY</span>
-                            </div>
-                            <h2 className="text-3xl md:text-5xl font-bold mb-8">Curated Textures</h2>
-                            <div className="space-y-6 text-gray-400 leading-relaxed">
-                                <p>
-                                    We strive to deliver a superior and satisfying experience to our clients by using a diverse range of high-quality materials. Each material is thoughtfully hand-picked based on the client's budget, ensuring harmony in quality, style, and price.
-                                </p>
-                                <p>
-                                    We collaborate with reputable vendors across India, including renowned brands like <strong>Kajaria, Nitco, Orientbell, Royal Touch, Amulya</strong>, and more. Our partnerships extend to a variety of top-tier brands, enabling us to offer tailored solutions that exceed expectations.
-                                </p>
-                                <p className="text-sm border-l-2 border-white/20 pl-4 italic">
-                                    For material selection, budgeting guidance, and brand recommendations, feel free to contact us directly. We’ll help you pick the right combination without compromising on quality or aesthetics.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </div>
+                </div>
+            </section>
         </Layout>
     );
 }

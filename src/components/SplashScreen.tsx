@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import { BrandLogo } from './BrandLogo';
 
 export function SplashScreen({ onComplete }: { onComplete: () => void }) {
     const [isExiting, setIsExiting] = useState(false);
@@ -7,8 +8,8 @@ export function SplashScreen({ onComplete }: { onComplete: () => void }) {
     useEffect(() => {
         const timer = setTimeout(() => {
             setIsExiting(true);
-            setTimeout(onComplete, 800); // Wait for exit animation
-        }, 2500); // Display time
+            setTimeout(onComplete, 650);
+        }, 900);
 
         return () => clearTimeout(timer);
     }, [onComplete]);
@@ -18,22 +19,30 @@ export function SplashScreen({ onComplete }: { onComplete: () => void }) {
             className="fixed inset-0 z-[100] bg-black flex items-center justify-center overflow-hidden"
             initial={{ opacity: 1 }}
             animate={isExiting ? { y: '-100%' } : { y: 0 }}
-            transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
+            transition={{ duration: 0.65, ease: [0.76, 0, 0.24, 1] }}
         >
-            <div className="relative">
+            <div className="relative flex flex-col items-center">
+                <motion.div
+                    initial={{ rotate: -35, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                    className="mb-6"
+                >
+                    <BrandLogo className="splash-brand-logo" />
+                </motion.div>
                 <motion.h1
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 1.2, ease: "easeOut" }}
-                    className="text-4xl md:text-7xl font-bold text-white tracking-tighter"
+                    className="text-3xl md:text-5xl font-semibold text-white tracking-[-0.05em]"
                 >
-                    Squares<span className="text-gray-500">N</span>Cubes
+                    Squares <span className="text-[#c8aa7c]">N</span> Cubes
                 </motion.h1>
                 <motion.div
                     initial={{ scaleX: 0 }}
                     animate={{ scaleX: 1 }}
-                    transition={{ delay: 0.5, duration: 0.8, ease: "easeInOut" }}
-                    className="h-px bg-white/20 mt-4 w-full origin-left"
+                    transition={{ delay: 0.25, duration: 0.65, ease: "easeInOut" }}
+                    className="h-px bg-[#c8aa7c]/50 mt-5 w-full origin-left"
                 />
             </div>
         </motion.div>

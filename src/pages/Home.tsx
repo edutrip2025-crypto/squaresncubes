@@ -1,162 +1,103 @@
+import { useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { motion, useScroll, useTransform, useReducedMotion, useSpring } from 'framer-motion';
+import { ArrowDown, ArrowUpRight, Pause, Play } from 'lucide-react';
 import { Layout } from '../components/layout/Layout';
-import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import { CubeScene } from '../components/3d/CubeScene';
-import { useNavigate } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import house from '../assets/Residential/Modern Luxury House/A.png';
+import villa from '../assets/Residential/Tropical Villa/A.png';
+import cafe from '../assets/Commercial/Cafe/A.png';
 
-interface TiltCardProps {
-    title: string;
-    desc: string;
-    image: string;
-    onClick: () => void;
-}
+const work = [
+    { title: 'Tropical Villa', category: 'Residential', image: villa, id: 'tropical-villa' },
+    { title: 'Modern Luxury House', category: 'Residential', image: house, id: 'modern-luxury-house' },
+    { title: 'Café', category: 'Commercial', image: cafe, id: 'cafe' },
+];
 
-function TiltCard({ title, desc, image, onClick }: TiltCardProps) {
-    const x = useMotionValue(0.5);
-    const y = useMotionValue(0.5);
-
-    const mouseXSpring = useSpring(x, { stiffness: 150, damping: 20 });
-    const mouseYSpring = useSpring(y, { stiffness: 150, damping: 20 });
-
-    const rotateX = useTransform(mouseYSpring, [0, 1], [10, -10]);
-    const rotateY = useTransform(mouseXSpring, [0, 1], [-10, 10]);
-
-    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        const width = rect.width;
-        const height = rect.height;
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
-        
-        x.set(mouseX / width);
-        y.set(mouseY / height);
-    };
-
-    const handleMouseLeave = () => {
-        x.set(0.5);
-        y.set(0.5);
-    };
-
+function WorkScene({ project, index }: { project: typeof work[number]; index: number }) {
+    const ref = useRef<HTMLElement>(null);
+    const reduced = useReducedMotion();
+    const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+    const imageX = useTransform(scrollYProgress, [0, 0.5, 1], index % 2 ? ['11%', '0%', '-7%'] : ['-11%', '0%', '7%']);
+    const imageY = useTransform(scrollYProgress, [0, 0.5, 1], ['8%', '0%', '-7%']);
+    const imagePan = useTransform(scrollYProgress, [0, 1], ['-7%', '7%']);
+    const rotateY = useTransform(scrollYProgress, [0, 0.5, 1], index % 2 ? [-6, 0, 4] : [6, 0, -4]);
+    const copyY = useTransform(scrollYProgress, [0, 0.5, 1], [65, 0, -55]);
+    const underlayY = useTransform(scrollYProgress, [0, 1], [45, -35]);
     return (
-        <div
-            className="perspective-[1000px] w-full"
-            style={{ perspective: "1000px" }}
-        >
-            <motion.div
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
-                onClick={onClick}
-                style={{
-                    rotateX,
-                    rotateY,
-                    transformStyle: "preserve-3d",
-                }}
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.3 }}
-                className="aspect-[16/10] w-full rounded-xl relative overflow-hidden group cursor-pointer border border-white/10 shadow-2xl bg-zinc-950"
-            >
-                {/* Background Image with Parallax */}
-                <div 
-                    className="absolute inset-0 transition-transform duration-700 group-hover:scale-105"
-                    style={{ transform: "translateZ(-20px)" }}
-                >
-                    <img
-                        src={image}
-                        alt={title}
-                        className="w-full h-full object-cover opacity-50 group-hover:opacity-80 transition-opacity duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-900/40 to-transparent" />
-                </div>
-
-                {/* Content with 3D Depth */}
-                <div 
-                    className="absolute inset-0 flex flex-col justify-end p-8 md:p-12"
-                    style={{ transform: "translateZ(40px)" }}
-                >
-                    <h3 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4 group-hover:text-yellow-400 transition-colors">
-                        {title}
-                    </h3>
-                    <p className="text-zinc-300 text-sm md:text-base max-w-md line-clamp-3 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                        {desc}
-                    </p>
-                    
-                    {/* Visual 3D hover helper */}
-                    <div className="flex items-center gap-2 text-sm text-yellow-400 mt-6 font-semibold opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-300 delay-75">
-                        View Projects <ArrowRight className="w-4 h-4" />
-                    </div>
-                </div>
+        <section ref={ref} className={`work-scene ${index % 2 ? 'is-right' : 'is-left'}`}>
+            <motion.div className="work-underlay" style={reduced ? {} : { y: underlayY }}><span>0{index + 1}</span></motion.div>
+            <motion.div className="work-image-layer" style={reduced ? {} : { x: imageX, y: imageY, rotateY }}>
+                <motion.img src={project.image} alt={project.title} loading="lazy" style={reduced ? {} : { y: imagePan }} />
+                <div className="work-shade" />
             </motion.div>
-        </div>
+            <motion.div className="work-caption work-copy-layer" style={reduced ? {} : { y: copyY }}>
+                <span className="scene-index">0{index + 1} / {project.category}</span>
+                <Link to={`/portfolio?sector=${project.category}&project=${project.id}`}>
+                    <h2>{project.title}</h2><ArrowUpRight aria-hidden="true" />
+                </Link>
+            </motion.div>
+        </section>
     );
 }
 
 export function Home() {
-    const navigate = useNavigate();
-
-    const sectors = [
-        { 
-            title: "Residential", 
-            sectorId: "Residential" as const, 
-            image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200", 
-            desc: "Bespoke living spaces, villas, apartments, and tailored residential designs designed for comfort, harmony, and modern elegance." 
-        },
-        { 
-            title: "Commercial", 
-            sectorId: "Commercial" as const, 
-            image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=1200", 
-            desc: "Cutting-edge corporate offices, retail spaces, restaurants, educational institutes, and sustainable commercial structures." 
-        }
-    ];
-
+    const journey = useRef<HTMLElement>(null);
+    const reduced = useReducedMotion();
+    const [paused, setPaused] = useState(false);
+    const { scrollYProgress } = useScroll({ target: journey, offset: ['start start', 'end end'] });
+    const smoothProgress = useSpring(scrollYProgress, { stiffness: 48, damping: 24, mass: 0.65, restDelta: 0.0005 });
+    const titleY = useTransform(smoothProgress, [0, 0.14], [0, -90]);
+    const titleOpacity = useTransform(smoothProgress, [0, 0.1], [1, 0]);
+    const chapterOne = useTransform(smoothProgress, [0.11, 0.17, 0.27, 0.32], [0, 1, 1, 0]);
+    const chapterTwo = useTransform(smoothProgress, [0.3, 0.37, 0.47, 0.52], [0, 1, 1, 0]);
+    const chapterThree = useTransform(smoothProgress, [0.5, 0.57, 0.67, 0.72], [0, 1, 1, 0]);
+    const chapterFour = useTransform(smoothProgress, [0.7, 0.77, 0.87, 0.92], [0, 1, 1, 0]);
+    const chapterFive = useTransform(smoothProgress, [0.9, 0.96, 1], [0, 1, 1]);
+    const progressWidth = useTransform(smoothProgress, [0, 1], ['0%', '100%']);
     return (
         <Layout>
-            {/* Hero Section */}
-            <section className="h-[80vh] flex items-center justify-center relative overflow-hidden">
-                <CubeScene />
-                <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/50 via-transparent to-black" />
-
-                <div className="relative z-10 text-center px-4">
-                    <motion.h1
-                        initial={{ y: 50, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                        className="text-3xl sm:text-5xl md:text-8xl font-bold tracking-tighter mb-6"
-                    >
-                        SQUARES<span className="text-gray-500 font-light">N</span>CUBES
-                    </motion.h1>
-                    <motion.p
-                        initial={{ y: 50, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ duration: 0.8, delay: 0.4 }}
-                        className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto"
-                    >
-                        Architectural Precision. Artistic Vision.
-                    </motion.p>
-                </div>
-            </section>
-
-            {/* Sectors (Residential & Commercial) Section */}
-            <section className="py-20 px-6 md:px-12 relative max-w-7xl mx-auto w-full">
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {sectors.map((sector, index) => (
-                        <motion.div
-                            key={index}
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6, delay: index * 0.15 }}
-                        >
-                            <TiltCard
-                                title={sector.title}
-                                desc={sector.desc}
-                                image={sector.image}
-                                onClick={() => navigate(`/portfolio?sector=${sector.sectorId}`)}
-                            />
+            <div className="spatial-home">
+                <section ref={journey} className={`architecture-journey ${reduced ? 'reduced-journey' : ''}`}>
+                    <div className="architecture-stage">
+                        <div className="residence-canvas"><CubeScene progress={smoothProgress} still={paused || !!reduced} /></div>
+                        <div className="stage-vignette" />
+                        <motion.div className="architecture-title" style={{ y: reduced ? 0 : titleY, opacity: titleOpacity }}>
+                            <span className="scene-index">Squares N Cubes / Architecture & interiors</span>
+                            <h1>Space.<br /><span>Considered.</span></h1>
                         </motion.div>
-                    ))}
-                </div>
-            </section>
+                        <motion.div className="architecture-chapter" style={{ opacity: chapterOne }}>
+                            <span className="scene-index">01 / Trace</span><h2>A line becomes<br />a direction.</h2>
+                        </motion.div>
+                        <motion.div className="architecture-chapter chapter-right" style={{ opacity: chapterTwo }}>
+                            <span className="scene-index">02 / Frame</span><h2>Structure defines<br />the in-between.</h2>
+                        </motion.div>
+                        <motion.div className="architecture-chapter chapter-center" style={{ opacity: chapterThree }}>
+                            <span className="scene-index">03 / Material</span><h2>Surface holds<br />memory.</h2>
+                        </motion.div>
+                        <motion.div className="architecture-chapter chapter-low" style={{ opacity: chapterFour }}>
+                            <span className="scene-index">04 / Inhabit</span><h2>Space begins<br />with people.</h2>
+                        </motion.div>
+                        <motion.div className="architecture-chapter chapter-right chapter-final" style={{ opacity: chapterFive }}>
+                            <span className="scene-index">05 / Reveal</span><h2>Enter the work.</h2>
+                        </motion.div>
+                        <div className="stage-bottom">
+                            <span className="scene-index"><ArrowDown size={13} /> Scroll to explore</span>
+                            <span className="concept-caption">Spatial film / scroll to move</span>
+                            <button onClick={() => setPaused(!paused)} aria-label={paused ? 'Enable pointer motion' : 'Pause pointer motion'} title={paused ? 'Enable pointer motion' : 'Pause pointer motion'}>
+                                {paused ? <Play size={14} /> : <Pause size={14} />}
+                            </button>
+                        </div>
+                        <motion.div className="journey-progress" style={{ width: progressWidth }} />
+                    </div>
+                </section>
+                <section className="work-intro">
+                    <span className="scene-index">Selected work / 01—03</span>
+                    <h2>Places to live.<br />Spaces to feel.</h2>
+                    <Link to="/portfolio">All projects <ArrowUpRight size={19} /></Link>
+                </section>
+                {work.map((project, index) => <WorkScene key={project.id} project={project} index={index} />)}
+            </div>
         </Layout>
     );
 }

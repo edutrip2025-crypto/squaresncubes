@@ -1,117 +1,79 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { Button } from './ui/Button';
+import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
+
+const projectTypes = ['Residential', 'Commercial', 'Hospitality', 'Other'];
+const projectStages = ['Just an idea', 'Site selected', 'Design underway', 'Ready to execute'];
+const timelines = ['0–3 months', '3–6 months', '6–12 months', 'Flexible'];
 
 export function ContactForm() {
-    const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+    const [step, setStep] = useState(0);
+    const [formData, setFormData] = useState({ type: '', location: '', stage: '', timeline: '', name: '', email: '', message: '' });
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault();
+    const setField = (name: string, value: string) => setFormData((current) => ({ ...current, [name]: value }));
+    const canContinue = step === 0 ? Boolean(formData.type && formData.location.trim()) : Boolean(formData.stage && formData.timeline && formData.message.trim());
 
-        // Custom validations
+    const handleSubmit = async (event: FormEvent) => {
+        event.preventDefault();
+        if (step < 2) {
+            if (canContinue) setStep((current) => current + 1);
+            return;
+        }
+
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(formData.email)) {
+        if (!formData.name.trim() || !emailRegex.test(formData.email)) {
             setStatus('error');
-            setErrorMessage('Please enter a valid email address.');
+            setErrorMessage('Please add your name and a valid email address.');
             return;
         }
 
         setStatus('loading');
         setErrorMessage('');
+        const structuredMessage = `Project type: ${formData.type}\nLocation: ${formData.location}\nCurrent stage: ${formData.stage}\nPreferred start: ${formData.timeline}\n\nProject brief:\n${formData.message}`;
 
         try {
-            const response = await fetch('/api/contact', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-
+            const response = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: formData.name, email: formData.email, message: structuredMessage }) });
             const data = await response.json();
-
-            if (response.ok) {
-                setStatus('success');
-                setFormData({ name: '', email: '', message: '' }); // Reset form
-            } else {
-                setStatus('error');
-                setErrorMessage(data.error || 'Something went wrong.');
-            }
+            if (!response.ok) throw new Error(data.error || 'Something went wrong.');
+            setStatus('success');
         } catch (error) {
-            console.error('Error submitting form:', error);
             setStatus('error');
-            setErrorMessage('Could not connect to the server. Please check your connection.');
+            setErrorMessage(error instanceof Error ? error.message : 'Could not connect. Please email us directly.');
         }
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
+    if (status === 'success') return <div className="brief-success"><span>Brief received / 01</span><h2>Thank you.</h2><p>Your project now has a starting point. We’ll continue the conversation by email.</p></div>;
 
-        if (name === 'name') {
-            // Only allow characters and single spaces. No leading/multiple spaces or numbers.
-            const nameValue = value.replace(/[^a-zA-Z\s]/g, '').replace(/\s{2,}/g, ' ');
-            setFormData({ ...formData, [name]: nameValue });
-        } else {
-            setFormData({ ...formData, [name]: value });
-        }
-    };
-
-    return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-            <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">Name</label>
-                <input
-                    name="name"
-                    required
-                    value={formData.name}
-                    onChange={handleChange}
-                    type="text"
-                    className="w-full bg-black/50 border border-white/20 p-3 text-white focus:outline-none focus:border-white transition-colors"
-                    placeholder="John Doe"
-                />
-            </div>
-            <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">Email</label>
-                <input
-                    name="email"
-                    required
-                    value={formData.email}
-                    onChange={handleChange}
-                    type="email"
-                    className="w-full bg-black/50 border border-white/20 p-3 text-white focus:outline-none focus:border-white transition-colors"
-                    placeholder="john@example.com"
-                />
-            </div>
-            <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">Message</label>
-                <textarea
-                    name="message"
-                    required
-                    value={formData.message}
-                    onChange={handleChange}
-                    rows={5}
-                    className="w-full bg-black/50 border border-white/20 p-3 text-white focus:outline-none focus:border-white transition-colors resize-none"
-                    placeholder="Tell us about your project..."
-                />
-            </div>
-
-            {status === 'success' && (
-                <div className="text-green-400 text-sm font-medium p-3 bg-green-500/10 border border-green-500/20 rounded">
-                    Your message has been sent successfully!
-                </div>
-            )}
-
-            {status === 'error' && (
-                <div className="text-red-400 text-sm font-medium p-3 bg-red-500/10 border border-red-500/20 rounded">
-                    {errorMessage}
-                </div>
-            )}
-
-            <Button disabled={status === 'loading'} size="lg" className="w-full mt-4">
-                {status === 'loading' ? 'Sending...' : 'Send Message'}
-            </Button>
-        </form>
-    );
+    return <form onSubmit={handleSubmit} className="brief-form">
+        <div className="brief-progress"><span>0{step + 1}</span><div>{[0, 1, 2].map((item) => <i key={item} className={item <= step ? 'is-active' : ''} />)}</div><small>03</small></div>
+        <div className="brief-step-frame">
+            {step === 0 && <div className="brief-step">
+                <span className="brief-step-kicker">Begin with the essentials</span>
+                <h2>What are we shaping?</h2>
+                <div className="brief-choices">{projectTypes.map((type) => <button type="button" key={type} aria-pressed={formData.type === type} onClick={() => setField('type', type)}>{type}</button>)}</div>
+                <label className="brief-line-field"><span>Project location</span><input value={formData.location} onChange={(event) => setField('location', event.target.value)} placeholder="City / neighbourhood" /></label>
+            </div>}
+            {step === 1 && <div className="brief-step">
+                <span className="brief-step-kicker">Set the coordinates</span>
+                <h2>Where does the idea stand?</h2>
+                <div className="brief-choice-group"><span>Current stage</span><div className="brief-choices">{projectStages.map((stage) => <button type="button" key={stage} aria-pressed={formData.stage === stage} onClick={() => setField('stage', stage)}>{stage}</button>)}</div></div>
+                <div className="brief-choice-group"><span>Preferred start</span><div className="brief-choices">{timelines.map((timeline) => <button type="button" key={timeline} aria-pressed={formData.timeline === timeline} onClick={() => setField('timeline', timeline)}>{timeline}</button>)}</div></div>
+                <label className="brief-line-field"><span>The brief</span><textarea value={formData.message} onChange={(event) => setField('message', event.target.value)} rows={3} placeholder="What should this place make possible?" /></label>
+            </div>}
+            {step === 2 && <div className="brief-step">
+                <span className="brief-step-kicker">One final detail</span>
+                <h2>How should we reach you?</h2>
+                <label className="brief-line-field"><span>Your name</span><input autoFocus required value={formData.name} onChange={(event) => setField('name', event.target.value.replace(/[^a-zA-Z\s.'-]/g, ''))} placeholder="Name" /></label>
+                <label className="brief-line-field"><span>Email</span><input required type="email" value={formData.email} onChange={(event) => setField('email', event.target.value)} placeholder="you@company.com" /></label>
+                <div className="brief-summary"><span>{formData.type}</span><span>{formData.location}</span><span>{formData.stage}</span><span>{formData.timeline}</span></div>
+            </div>}
+        </div>
+        {status === 'error' && <p className="brief-error">{errorMessage}</p>}
+        <div className="brief-actions">
+            <button type="button" className="brief-back" disabled={step === 0} onClick={() => { setStatus('idle'); setStep((current) => Math.max(0, current - 1)); }}><ArrowLeft size={16} /> Back</button>
+            <button type="submit" className="brief-next" disabled={step < 2 ? !canContinue : status === 'loading'}>{step === 2 ? (status === 'loading' ? 'Sending…' : 'Send the brief') : 'Continue'} {step === 2 ? <ArrowUpRight size={17} /> : <ArrowRight size={17} />}</button>
+        </div>
+    </form>;
 }
