@@ -74,6 +74,7 @@ export function Portfolio() {
     const [projectDirection, setProjectDirection] = useState(1);
     const leftWheelLock = useRef(0);
     const rightWheelLock = useRef(0);
+    const touchStart = useRef({ left: 0, right: 0 });
     const project = filtered[Math.min(projectIndex, Math.max(0, filtered.length - 1))] || projects[0];
     const projectImages = project.files.filter((file, index, files) => file.url !== project.image && files.findIndex((candidate) => candidate.url === file.url) === index);
 
@@ -111,6 +112,17 @@ export function Portfolio() {
         setImageIndex((current) => Math.max(-1, Math.min(projectImages.length - 1, current + (event.deltaY > 0 ? 1 : -1))));
     }
 
+    function handleTouchStart(side: 'left' | 'right', event: React.TouchEvent<HTMLElement>) {
+        touchStart.current[side] = event.changedTouches[0]?.clientY || 0;
+    }
+
+    function handleTouchEnd(side: 'left' | 'right', event: React.TouchEvent<HTMLElement>) {
+        const distance = touchStart.current[side] - (event.changedTouches[0]?.clientY || 0);
+        if (Math.abs(distance) < 36) return;
+        if (side === 'left') moveProject(distance > 0 ? 1 : -1);
+        else setImageIndex((current) => Math.max(-1, Math.min(projectImages.length - 1, current + (distance > 0 ? 1 : -1))));
+    }
+
     function openPreview() {
         const next = new URLSearchParams(params);
         next.set('project', project.id);
@@ -120,7 +132,7 @@ export function Portfolio() {
     return (
         <Layout>
             <div className="split-work">
-                <section className="split-work-main" onWheel={handleLeftWheel} aria-label="Scroll to browse projects">
+                <section className="split-work-main" onWheel={handleLeftWheel} onTouchStart={(event) => handleTouchStart('left', event)} onTouchEnd={(event) => handleTouchEnd('left', event)} aria-label="Scroll or swipe to browse projects">
                     <div className="split-work-toolbar">
                         <span>Work / {String(filtered.length).padStart(2, '0')}</span>
                         <nav aria-label="Project categories">{['All', 'Residential', 'Commercial'].map((category) => <button key={category} aria-pressed={sector === category} onClick={() => setParams(category === 'All' ? {} : { sector: category }, { replace: true, preventScrollReset: true })}>{category}</button>)}</nav>
@@ -143,10 +155,10 @@ export function Portfolio() {
                             <small>{project.location || 'India'} <ArrowUpRight size={15} /></small>
                         </motion.div>
                     </button>
-                    <div className="pane-instruction"><span>Cursor here</span><strong>Scroll to change project</strong></div>
+                    <div className="pane-instruction"><span>Cursor / swipe here</span><strong>Change project</strong></div>
                 </section>
 
-                <section className="split-work-views" onWheel={handleRightWheel} aria-label="Scroll to reveal project images">
+                <section className="split-work-views" onWheel={handleRightWheel} onTouchStart={(event) => handleTouchStart('right', event)} onTouchEnd={(event) => handleTouchEnd('right', event)} aria-label="Scroll or swipe to reveal project images">
                     <div className="views-toolbar"><span>Project views</span><span>{String(imageIndex + 1).padStart(2, '0')} / {String(projectImages.length).padStart(2, '0')}</span></div>
                     <div className="view-stack">
                         <div className={`view-stack-empty ${imageIndex >= 0 ? 'is-covered' : ''}`}>
@@ -165,7 +177,7 @@ export function Portfolio() {
                             })}
                         </AnimatePresence>
                     </div>
-                    <div className="pane-instruction pane-instruction-right"><span>Cursor here</span><strong>Scroll to layer images</strong></div>
+                    <div className="pane-instruction pane-instruction-right"><span>Cursor / swipe here</span><strong>Layer images</strong></div>
                 </section>
             </div>
             {selected && <ProjectViewer key={selected.id} project={selected} close={close} />}
