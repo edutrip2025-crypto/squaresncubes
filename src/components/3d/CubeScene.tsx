@@ -9,6 +9,42 @@ import threeBhk from '../../assets/Residential/3BHK Apartment/F.png';
 
 const portalDepths = [4, 1, -2, -5, -8, -11, -14];
 
+function LogoBreak({ progress }: { progress: MotionValue<number> }) {
+    const group = useRef<THREE.Group>(null);
+    const materials = useRef<THREE.ShaderMaterial[]>([]);
+    const logo = useTexture('/studio-logo.png');
+    const slices = useMemo(() => Array.from({ length: 8 }, (_, index) => index), []);
+
+    useFrame(({ camera, size }) => {
+        const p = progress.get();
+        const split = THREE.MathUtils.smoothstep(THREE.MathUtils.clamp((p - 0.035) / 0.15, 0, 1), 0, 1);
+        const fade = 1 - THREE.MathUtils.smoothstep(THREE.MathUtils.clamp((p - 0.14) / 0.075, 0, 1), 0, 1);
+        if (!group.current) return;
+        group.current.visible = fade > 0.002;
+        group.current.position.x = size.width < 600 ? 5.35 : 4.85;
+        group.current.scale.setScalar(size.width < 600 ? 0.29 : 0.64);
+        group.current.lookAt(camera.position);
+        group.current.children.forEach((slice, index) => {
+            const direction = index % 2 ? 1 : -1;
+            slice.position.x = direction * split * (1.25 + index * 0.13);
+            slice.position.y = (index - 3.5) * 0.39 + direction * split * 0.16;
+            slice.position.z = -split * (index * 0.16);
+            slice.rotation.z = direction * split * (0.055 + index * 0.008);
+        });
+        materials.current.forEach((material) => { material.uniforms.opacity.value = fade; });
+    });
+
+    return <group ref={group} position={[4.85, 2.72, 7.1]} scale={0.64}>
+        {slices.map((index) => <mesh key={index} position={[0, (index - 3.5) * 0.39, 0]}>
+            <planeGeometry args={[3.15, 0.405]} />
+            <shaderMaterial ref={(material) => { if (material) materials.current[index] = material; }} transparent depthWrite={false}
+                uniforms={{ map: { value: logo }, opacity: { value: 1 }, sliceOffset: { value: index / 8 } }}
+                vertexShader={`varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`}
+                fragmentShader={`uniform sampler2D map; uniform float opacity; uniform float sliceOffset; varying vec2 vUv; void main(){ vec2 slicedUv = vec2(vUv.x, vUv.y / 8.0 + sliceOffset); vec4 source = texture2D(map, slicedUv); float gold = step(0.08, source.r - source.b); vec3 ink = mix(vec3(0.95, 0.94, 0.90), vec3(0.91, 0.68, 0.40), gold); gl_FragColor = vec4(ink, source.a * opacity); }`} />
+        </mesh>)}
+    </group>;
+}
+
 function Portal({ z, index }: { z: number; index: number }) {
     const pale = index % 3 === 0;
     const material = pale ? '#d9d6cd' : index % 3 === 1 ? '#1c2721' : '#b47d3f';
@@ -23,21 +59,26 @@ function ProjectPlane({ texture, position, rotation, index, progress, start }: {
     const group = useRef<THREE.Group>(null);
     const imageMaterial = useRef<THREE.MeshBasicMaterial>(null);
     const backingMaterial = useRef<THREE.MeshStandardMaterial>(null);
-    useFrame(() => {
+    useFrame(({ size }) => {
         const local = THREE.MathUtils.smoothstep(THREE.MathUtils.clamp((progress.get() - start) / 0.25, 0, 1), 0, 1);
         if (group.current) {
             group.current.visible = local > 0.002;
             group.current.position.y = position[1] + (1 - local) * 1.35;
-            group.current.scale.setScalar(0.84 + local * 0.16);
+            const responsiveScale = size.width < 600 ? 0.62 : 1;
+            group.current.scale.setScalar((0.84 + local * 0.16) * responsiveScale);
         }
         if (imageMaterial.current) imageMaterial.current.opacity = local;
         if (backingMaterial.current) backingMaterial.current.opacity = local;
     });
-    return <Float speed={0.7 + index * 0.12} rotationIntensity={0.08} floatIntensity={0.12}>
+    const image = texture.image as { width?: number; height?: number } | undefined;
+    const aspect = image?.width && image?.height ? image.width / image.height : 1.6;
+    const imageWidth = 3.3;
+    const imageHeight = imageWidth / aspect;
+    return <Float speed={0.7 + index * 0.12} rotationIntensity={0.055} floatIntensity={0.08}>
         <group ref={group} position={position} rotation={rotation} visible={false}>
-            <mesh position={[0, 0, -0.08]} castShadow><boxGeometry args={[3.95, 2.58, 0.12]} /><meshStandardMaterial ref={backingMaterial} color="#101713" roughness={0.7} transparent opacity={0} /></mesh>
-            <mesh><planeGeometry args={[3.76, 2.36]} /><meshBasicMaterial ref={imageMaterial} map={texture} toneMapped={false} transparent opacity={0} /></mesh>
-            <mesh position={[-1.94, -1.37, 0.04]}><sphereGeometry args={[0.065, 16, 16]} /><meshStandardMaterial color="#d6a15c" metalness={0.75} roughness={0.22} emissive="#6a3b16" emissiveIntensity={0.35} /></mesh>
+            <mesh position={[0, 0, -0.08]} castShadow><boxGeometry args={[imageWidth + 0.2, imageHeight + 0.2, 0.12]} /><meshStandardMaterial ref={backingMaterial} color="#101713" roughness={0.7} transparent opacity={0} /></mesh>
+            <mesh><planeGeometry args={[imageWidth, imageHeight]} /><meshBasicMaterial ref={imageMaterial} map={texture} toneMapped={false} transparent opacity={0} side={THREE.DoubleSide} /></mesh>
+            <mesh position={[-imageWidth / 2 - 0.04, -imageHeight / 2 - 0.08, 0.04]}><sphereGeometry args={[0.055, 16, 16]} /><meshStandardMaterial color="#d6a15c" metalness={0.75} roughness={0.22} emissive="#6a3b16" emissiveIntensity={0.35} /></mesh>
         </group>
     </Float>;
 }
@@ -97,22 +138,23 @@ function SpatialFilm({ progress, still }: { progress: MotionValue<number>; still
 
     useFrame(({ camera, pointer }, delta) => {
         const p = progress.get();
+        const travel = THREE.MathUtils.clamp((p - 0.12) / 0.88, 0, 1);
         const smooth = (v: number) => THREE.MathUtils.smoothstep(v, 0, 1);
         portals.current?.children.forEach((portal, i) => {
-            const resting = i === 0 ? 0.82 : i === 1 ? 0.42 : 0;
-            const local = Math.max(resting, smooth(THREE.MathUtils.clamp((p - i * 0.075) / 0.2, 0, 1)));
+            const resting = p < 0.12 ? 0 : i === 0 ? 0.82 : i === 1 ? 0.42 : 0;
+            const local = Math.max(resting, smooth(THREE.MathUtils.clamp((travel - i * 0.075) / 0.2, 0, 1)));
             portal.scale.y = 0.04 + local * 0.96;
             portal.position.y = (1 - local) * -1.8;
             portal.rotation.z = (1 - local) * (i % 2 ? -0.08 : 0.08);
         });
         slabs.current?.children.forEach((slab, i) => {
-            const local = smooth(THREE.MathUtils.clamp((p - (0.1 + i * 0.08)) / 0.24, 0, 1));
+            const local = smooth(THREE.MathUtils.clamp((travel - (0.1 + i * 0.08)) / 0.24, 0, 1));
             slab.position.x = (i % 2 ? 1 : -1) * (5.7 - local * 1.9);
             slab.rotation.z = (1 - local) * (i % 2 ? 0.12 : -0.12);
         });
 
-        const desired = cameraPath.getPointAt(Math.min(0.995, p));
-        const target = cameraPath.getPointAt(Math.min(1, p + 0.055));
+        const desired = cameraPath.getPointAt(Math.min(0.995, travel));
+        const target = cameraPath.getPointAt(Math.min(1, travel + 0.055));
         if (!still) {
             desired.x += pointer.x * 0.18;
             desired.y += pointer.y * 0.1;
@@ -122,11 +164,12 @@ function SpatialFilm({ progress, still }: { progress: MotionValue<number>; still
     });
 
     return <>
+        <LogoBreak progress={progress} />
         <group ref={portals}>{portalDepths.map((z, i) => <Portal key={z} z={z} index={i} />)}</group>
         <group>
-            <ProjectPlane texture={textures[0]} position={[-1.85, 1.85, -0.35]} rotation={[0, 0.34, 0]} index={0} progress={progress} start={0.15} />
-            <ProjectPlane texture={textures[1]} position={[1.8, 1.85, -6.25]} rotation={[0, -0.34, 0]} index={1} progress={progress} start={0.39} />
-            <ProjectPlane texture={textures[2]} position={[-1.7, 1.85, -12.25]} rotation={[0, 0.3, 0]} index={2} progress={progress} start={0.65} />
+            <ProjectPlane texture={textures[0]} position={[-1.2, 1.85, -0.35]} rotation={[0, 0.2, 0]} index={0} progress={progress} start={0.25} />
+            <ProjectPlane texture={textures[1]} position={[1.15, 1.85, -6.25]} rotation={[0, -0.2, 0]} index={1} progress={progress} start={0.5} />
+            <ProjectPlane texture={textures[2]} position={[-1.1, 1.85, -12.25]} rotation={[0, 0.18, 0]} index={2} progress={progress} start={0.73} />
         </group>
         <group ref={slabs}>
             {[-1, -4, -7, -10].map((z, i) => <mesh key={z} position={[i % 2 ? 4 : -4, 1.25 + (i % 2) * 1.15, z]} castShadow><boxGeometry args={[3.1, 0.1, 1.4]} /><meshStandardMaterial color={i % 2 ? '#d4d1c7' : '#26332b'} roughness={0.62} metalness={0.08} /></mesh>)}

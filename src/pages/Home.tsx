@@ -47,8 +47,8 @@ export function Home() {
     const [paused, setPaused] = useState(false);
     const { scrollYProgress } = useScroll({ target: journey, offset: ['start start', 'end end'] });
     const smoothProgress = useSpring(scrollYProgress, { stiffness: 48, damping: 24, mass: 0.65, restDelta: 0.0005 });
-    const titleY = useTransform(smoothProgress, [0, 0.14], [0, -90]);
-    const titleOpacity = useTransform(smoothProgress, [0, 0.1], [1, 0]);
+    const titleY = useTransform(smoothProgress, [0, 0.06, 0.14], [30, 0, -90]);
+    const titleOpacity = useTransform(smoothProgress, [0, 0.025, 0.065, 0.13], [0, 0, 1, 0]);
     const chapterOne = useTransform(smoothProgress, [0.11, 0.17, 0.27, 0.32], [0, 1, 1, 0]);
     const chapterTwo = useTransform(smoothProgress, [0.3, 0.37, 0.47, 0.52], [0, 1, 1, 0]);
     const chapterThree = useTransform(smoothProgress, [0.5, 0.57, 0.67, 0.72], [0, 1, 1, 0]);

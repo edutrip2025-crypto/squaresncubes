@@ -351,7 +351,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .viewer-info { grid-template-columns: 1fr; gap: 25px; }
   .viewer-info dl { gap: 20px; }
 }
-.architecture-journey { height: 900svh; position: relative; }
+.architecture-journey { height: 1200svh; position: relative; }
 .architecture-stage { height: 100svh; position: sticky; top: 0; overflow: hidden; background: #141b17; }
 .residence-fallback, .residence-canvas { position: absolute; inset: 0; }
 .residence-canvas canvas { display: block; }
@@ -401,11 +401,11 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .route-curtain { position: fixed; inset: 0; background: #c8c5bb; z-index: 100; pointer-events: none; transform-origin: top; }
 a:focus-visible, button:focus-visible { outline: 2px solid #a9bfaa; outline-offset: 5px; }
 @media(max-width: 767px) {
-  .architecture-journey { height: 900svh; }
+  .architecture-journey { height: 1100svh; }
   .architecture-stage { height: 100dvh; min-height: 100svh; }
   .architecture-title { top: 15%; left: 6%; }
   .architecture-title h1 { font-size: 67px; }
-  .residence-canvas { inset: 0 -18%; }
+  .residence-canvas { inset: 0; }
   .architecture-chapter { top: 17%; }
   .chapter-center { left: 50%; top: 14%; }
   .chapter-low { top: auto; bottom: 18%; }
