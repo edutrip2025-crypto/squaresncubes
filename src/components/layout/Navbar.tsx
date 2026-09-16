@@ -13,14 +13,29 @@ export function Navbar() {
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [showLogo, setShowLogo] = useState(true);
     const lightBackground = false;
 
     useEffect(() => {
-        const onScroll = () => setScrolled(window.scrollY > 24);
+        const onScroll = () => {
+            setScrolled(window.scrollY > 24);
+            if (location.pathname === '/') {
+                const journeyEl = document.querySelector('.architecture-journey');
+                if (journeyEl) {
+                    const rect = journeyEl.getBoundingClientRect();
+                    // Show logo once we've scrolled past the 3D animation section
+                    setShowLogo(rect.bottom <= window.innerHeight + 100);
+                } else {
+                    setShowLogo(true);
+                }
+            } else {
+                setShowLogo(true);
+            }
+        };
         onScroll();
         window.addEventListener('scroll', onScroll, { passive: true });
         return () => window.removeEventListener('scroll', onScroll);
-    }, []);
+    }, [location.pathname]);
 
     useEffect(() => setIsOpen(false), [location.pathname]);
 
@@ -33,7 +48,11 @@ export function Navbar() {
                 className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${lightBackground ? 'nav-on-light' : ''} ${scrolled ? 'bg-[#0b0b0a]/88 backdrop-blur-xl border-b hairline' : 'bg-transparent'}`}
             >
                 <div className="mx-auto flex h-[76px] max-w-[1500px] items-center justify-between px-5 md:px-10">
-                    <Link to="/" className="group relative z-[70] flex items-center gap-3" aria-label="Squares N Cubes home">
+                    <Link 
+                        to="/" 
+                        className={`group relative z-[70] flex items-center gap-3 transition-opacity duration-500 ${showLogo ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`} 
+                        aria-label="Squares N Cubes home"
+                    >
                         <BrandLogo tone={lightBackground ? 'black' : 'white'} className="nav-brand-logo" />
                         <span className="text-[15px] font-semibold tracking-[-0.04em]">SQUARES <span className="text-[#c8aa7c]">N</span> CUBES</span>
                     </Link>

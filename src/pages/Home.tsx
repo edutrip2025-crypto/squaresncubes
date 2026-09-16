@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useScroll, useTransform, useReducedMotion, useSpring } from 'framer-motion';
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { ArrowDown, ArrowUpRight, Pause, Play } from 'lucide-react';
 import { Layout } from '../components/layout/Layout';
 import { CubeScene } from '../components/3d/CubeScene';
@@ -46,7 +46,50 @@ export function Home() {
     const reduced = useReducedMotion();
     const [paused, setPaused] = useState(false);
     const { scrollYProgress } = useScroll({ target: journey, offset: ['start start', 'end end'] });
-    const smoothProgress = useSpring(scrollYProgress, { stiffness: 48, damping: 24, mass: 0.65, restDelta: 0.0005 });
+    // Complete the story while the stage is still pinned. A spring here lags
+    // behind fast native scrolling and continues animating after sticky releases.
+    const smoothProgress = useTransform(scrollYProgress, [0, 0.985, 1], [0, 1, 1]);
+    useEffect(() => {
+        const node = journey.current;
+        if (!node || reduced) return;
+        // Consume gestures only within the pinned story. No queued movement or
+        // synthetic momentum: reversing direction takes effect immediately.
+        const advance = (delta: number, event: Event) => {
+            const rect = node.getBoundingClientRect();
+            const end = rect.bottom - window.innerHeight;
+            if (rect.top > 1 || end <= 0 || (window.scrollY <= 0 && delta < 0)) return;
+            if (event.cancelable) {
+                event.preventDefault();
+                window.scrollBy({ top: Math.sign(delta) * Math.min(Math.abs(delta) * 0.65, 100), behavior: 'instant' });
+            }
+        };
+        const wheel = (event: WheelEvent) => {
+            if (event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+            const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? window.innerHeight : 1;
+            advance(event.deltaY * unit, event);
+        };
+        let previousY: number | null = null;
+        const start = (event: TouchEvent) => { previousY = event.touches.length === 1 ? event.touches[0].clientY : null; };
+        const move = (event: TouchEvent) => {
+            if (previousY === null || event.touches.length !== 1) return;
+            const y = event.touches[0].clientY;
+            advance(previousY - y, event);
+            previousY = y;
+        };
+        const end = () => { previousY = null; };
+        node.addEventListener('wheel', wheel, { passive: false });
+        node.addEventListener('touchstart', start, { passive: true });
+        node.addEventListener('touchmove', move, { passive: false });
+        node.addEventListener('touchend', end);
+        node.addEventListener('touchcancel', end);
+        return () => {
+            node.removeEventListener('wheel', wheel);
+            node.removeEventListener('touchstart', start);
+            node.removeEventListener('touchmove', move);
+            node.removeEventListener('touchend', end);
+            node.removeEventListener('touchcancel', end);
+        };
+    }, [reduced]);
     const titleY = useTransform(smoothProgress, [0, 0.06, 0.14], [30, 0, -90]);
     const titleOpacity = useTransform(smoothProgress, [0, 0.025, 0.065, 0.13], [0, 0, 1, 0]);
     const chapterOne = useTransform(smoothProgress, [0.11, 0.17, 0.27, 0.32], [0, 1, 1, 0]);
@@ -79,7 +122,7 @@ export function Home() {
                             <span className="scene-index">04 / Inhabit</span><h2>Space begins<br />with people.</h2>
                         </motion.div>
                         <motion.div className="architecture-chapter chapter-right chapter-final" style={{ opacity: chapterFive }}>
-                            <span className="scene-index">05 / Reveal</span><h2>Enter the work.</h2>
+                            <span className="scene-index">05 / Arrive</span><h2>Explore the work.</h2>
                         </motion.div>
                         <div className="stage-bottom">
                             <span className="scene-index"><ArrowDown size={13} /> Scroll to explore</span>
