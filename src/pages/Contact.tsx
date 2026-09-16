@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowUpRight, Mail, MapPin, Phone } from 'lucide-react';
+import { ArrowUpRight, Mail, MapPin, Phone, MessageCircle } from 'lucide-react';
 import { Layout } from '../components/layout/Layout';
 import { ContactForm } from '../components/ContactForm';
 
@@ -23,6 +23,9 @@ export function Contact() {
                                 <Mail size={18} className="shrink-0 text-[#c8aa7c]" />hello@thesquaresncubes.in<ArrowUpRight size={14} className="opacity-40 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
                             </a>
                             <a href="tel:+919347954461" className="flex items-center gap-4 hover:text-white"><Phone size={18} className="shrink-0 text-[#c8aa7c]" />+91 93479 54461</a>
+                            <a href="https://wa.me/919347954461" target="_blank" rel="noreferrer" className="flex items-center gap-4 hover:text-white">
+                                <MessageCircle size={18} className="shrink-0 text-[#c8aa7c]" />WhatsApp Us
+                            </a>
                         </div>
                     </motion.div>
                     <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .12, duration: .8, ease: [0.16,1,0.3,1] }} className="contact-brief-shell">

@@ -14,9 +14,9 @@ export function Layout({ children }: { children: ReactNode }) {
                     <div className="grid gap-14 lg:grid-cols-[1.5fr_0.7fr_0.8fr]">
                         <div>
                             <p className="eyebrow mb-6">Begin a conversation</p>
-                            <Link to="/contact" className="display-serif group inline-flex max-w-3xl items-end gap-5 text-5xl leading-[0.96] md:text-7xl">
+                            <Link to="/contact" className="display-serif group block max-w-3xl text-5xl leading-[0.96] md:text-7xl">
                                 Let’s shape what’s next.
-                                <ArrowUpRight className="mb-1 shrink-0 text-[#c8aa7c] transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" size={34} />
+                                <ArrowUpRight className="inline-block mb-1 ml-4 shrink-0 text-[#c8aa7c] transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" size={34} />
                             </Link>
                         </div>
                         <div className="text-sm leading-7 text-white/55">
