@@ -18,8 +18,8 @@ export function SplashScreen({ onComplete }: { onComplete: () => void }) {
         <motion.div
             className="fixed inset-0 z-[100] bg-black flex items-center justify-center overflow-hidden"
             initial={{ opacity: 1 }}
-            animate={isExiting ? { y: '-100%' } : { y: 0 }}
-            transition={{ duration: 0.65, ease: [0.76, 0, 0.24, 1] }}
+            animate={isExiting ? { opacity: 0 } : { opacity: 1 }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
         >
             <div className="relative flex flex-col items-center">
                 <motion.div
