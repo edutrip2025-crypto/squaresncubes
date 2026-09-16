@@ -3,7 +3,6 @@ import { Home } from './pages/Home';
 import { Portfolio } from './pages/Portfolio';
 import { Services } from './pages/Services';
 import { Contact } from './pages/Contact';
-import ScrollToTop from './components/ScrollToTop';
 
 import { useState } from 'react';
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
@@ -62,7 +61,6 @@ function App() {
       <AnimatePresence mode="wait">
         {loading && <SplashScreen onComplete={() => setLoading(false)} />}
       </AnimatePresence>
-      <ScrollToTop />
       <AnimatedRoutes />
     </BrowserRouter></MotionConfig>
   );
