@@ -8,6 +8,7 @@ import ScrollToTop from './components/ScrollToTop';
 import { useState } from 'react';
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
 import { SplashScreen } from './components/SplashScreen';
+import { BrandLogo } from './components/BrandLogo';
 
 import { useRef, useEffect } from 'react';
 
@@ -23,13 +24,15 @@ function AnimatedRoutes() {
   return <AnimatePresence mode="wait" onExitComplete={() => window.scrollTo({ top: 0, behavior: 'instant' })}>
     <motion.div 
       key={location.pathname + "-curtain"} 
-      className="route-curtain" 
-      initial={{ scaleY: 1 }} 
-      animate={{ scaleY: 0 }} 
-      exit={{ scaleY: 1 }}
+      className="route-curtain flex items-center justify-center" 
+      initial={{ clipPath: 'inset(0% 0% 0% 0%)' }} 
+      animate={{ clipPath: 'inset(0% 0% 100% 0%)' }} 
+      exit={{ clipPath: 'inset(0% 0% 0% 0%)' }}
       transition={{ duration: 0.8, delay: curtainDelay, ease: [0.76, 0, 0.24, 1] }} 
       style={{ zIndex: 100 }} 
-    />
+    >
+      <BrandLogo tone="black" className="w-16 h-16 md:w-24 md:h-24 opacity-80" />
+    </motion.div>
     <motion.div 
       key={location.pathname} 
       initial={{ opacity: 1 }} 
