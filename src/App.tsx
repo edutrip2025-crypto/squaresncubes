@@ -21,8 +21,22 @@ function AnimatedRoutes() {
   const curtainDelay = isInitial.current ? 1.5 : 0.1;
 
   return <AnimatePresence mode="wait" onExitComplete={() => window.scrollTo({ top: 0, behavior: 'instant' })}>
-    <motion.div key={location.pathname + "-curtain"} className="route-curtain" initial={{ scaleY: 1 }} animate={{ scaleY: 0 }} transition={{ duration: 0.9, delay: curtainDelay, ease: [0.76, 0, 0.24, 1] }} style={{ zIndex: 100 }} />
-    <motion.div key={location.pathname} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
+    <motion.div 
+      key={location.pathname + "-curtain"} 
+      className="route-curtain" 
+      initial={{ scaleY: 1 }} 
+      animate={{ scaleY: 0 }} 
+      exit={{ scaleY: 1 }}
+      transition={{ duration: 0.8, delay: curtainDelay, ease: [0.76, 0, 0.24, 1] }} 
+      style={{ zIndex: 100 }} 
+    />
+    <motion.div 
+      key={location.pathname} 
+      initial={{ opacity: 1 }} 
+      animate={{ opacity: 1 }} 
+      exit={{ opacity: 1 }} 
+      transition={{ duration: 0.9 }}
+    >
       <Routes location={location}>
         <Route path="/" element={<Home />} />
         <Route path="/portfolio" element={<Portfolio />} />
