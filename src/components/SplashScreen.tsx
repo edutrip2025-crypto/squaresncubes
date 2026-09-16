@@ -16,7 +16,7 @@ export function SplashScreen({ onComplete }: { onComplete: () => void }) {
 
     return (
         <motion.div
-            className="fixed inset-0 z-[100] bg-black flex items-center justify-center overflow-hidden"
+            className="fixed inset-0 z-[110] bg-black flex items-center justify-center overflow-hidden"
             initial={{ opacity: 1 }}
             animate={isExiting ? { opacity: 0 } : { opacity: 1 }}
             transition={{ duration: 0.5, ease: 'easeInOut' }}
