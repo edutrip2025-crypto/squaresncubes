@@ -24,7 +24,7 @@ function AnimatedRoutes() {
   return <AnimatePresence mode="wait" onExitComplete={() => window.scrollTo({ top: 0, behavior: 'instant' })}>
     <motion.div 
       key={location.pathname + "-curtain"} 
-      className="route-curtain flex items-center justify-center" 
+      className="route-curtain flex flex-col items-center justify-center gap-5" 
       initial={{ clipPath: 'inset(0% 0% 0% 0%)' }} 
       animate={{ clipPath: 'inset(0% 0% 100% 0%)' }} 
       exit={{ clipPath: 'inset(0% 0% 0% 0%)' }}
@@ -32,6 +32,9 @@ function AnimatedRoutes() {
       style={{ zIndex: 100 }} 
     >
       <BrandLogo tone="black" className="w-16 h-16 md:w-24 md:h-24 opacity-80" />
+      <span className="text-black text-[15px] md:text-[18px] font-semibold tracking-[-0.04em] opacity-80">
+        SQUARES <span className="text-[#c8aa7c]">N</span> CUBES
+      </span>
     </motion.div>
     <motion.div 
       key={location.pathname} 
