@@ -9,40 +9,70 @@ import threeBhk from '../../assets/Residential/3BHK Apartment/F.png';
 
 const portalDepths = [4, 1, -2, -5, -8, -11, -14];
 
-function LogoBreak({ progress }: { progress: MotionValue<number> }) {
-    const group = useRef<THREE.Group>(null);
-    const materials = useRef<THREE.ShaderMaterial[]>([]);
-    const logo = useTexture('/studio-logo.png');
-    const slices = useMemo(() => Array.from({ length: 8 }, (_, index) => index), []);
+// Each quadrilateral follows a stroke of the supplied mark. These same vertices
+// straighten into the first three portals; no image slices or crossfade are used.
+const logoStrokes = [
+    [[70,135],[249,35],[247,106],[136,168]],
+    [[249,35],[369,100],[303,136],[247,106]],
+    [[70,135],[136,168],[136,237],[70,204]],
+    [[70,204],[136,168],[300,255],[240,296]],
+    [[240,296],[300,255],[300,423],[240,387]],
+    [[70,277],[240,367],[240,387],[70,347]],
+    [[70,347],[240,387],[300,423],[253,450]],
+    [[307,351],[437,277],[437,347],[307,423]],
+    [[330,138],[376,113],[420,138],[375,163]],
+    // Upper-right return of the C, below the gold inset.
+    [[378,177],[438,143],[438,208],[408,192.5]],
+    // The inset's surrounding face sits behind the gold diamond.
+    [[312,138],[376,102],[438,137],[375,174]],
+];
 
-    useFrame(({ camera, size }) => {
-        const p = progress.get();
-        const split = THREE.MathUtils.smoothstep(THREE.MathUtils.clamp((p - 0.035) / 0.15, 0, 1), 0, 1);
-        const fade = 1 - THREE.MathUtils.smoothstep(THREE.MathUtils.clamp((p - 0.14) / 0.075, 0, 1), 0, 1);
-        if (!group.current) return;
-        group.current.visible = fade > 0.002;
-        group.current.position.x = size.width < 600 ? 5.35 : 4.85;
-        group.current.scale.setScalar(size.width < 600 ? 0.29 : 0.64);
-        group.current.lookAt(camera.position);
-        group.current.children.forEach((slice, index) => {
-            const direction = index % 2 ? 1 : -1;
-            slice.position.x = direction * split * (1.25 + index * 0.13);
-            slice.position.y = (index - 3.5) * 0.39 + direction * split * 0.16;
-            slice.position.z = -split * (index * 0.16);
-            slice.rotation.z = direction * split * (0.055 + index * 0.008);
-        });
-        materials.current.forEach((material) => { material.uniforms.opacity.value = fade; });
+function LogoStroke({ index, progress }: { index: number; progress: MotionValue<number> }) {
+    const geometry = useMemo(() => {
+        const result = new THREE.BufferGeometry();
+        result.setAttribute('position', new THREE.BufferAttribute(new Float32Array(24), 3).setUsage(THREE.DynamicDrawUsage));
+        result.setIndex([0,1,2,0,2,3, 4,6,5,4,7,6, 0,4,5,0,5,1, 1,5,6,1,6,2, 2,6,7,2,7,3, 3,7,4,3,4,0]);
+        return result;
+    }, []);
+    useFrame(({ size }) => {
+        const unfold = THREE.MathUtils.smoothstep(progress.get(), 0.045 + index * 0.006, 0.23 + index * 0.006);
+        const settle = THREE.MathUtils.smoothstep(progress.get(), 0.22, 0.34);
+        const scale = size.width < 600 ? 0.005 : 0.008;
+        const slot = index % 3;
+        const z = 4 - Math.floor(index / 3) * 3;
+        const extra = index >= 9;
+        const x = extra ? (index === 9 ? -3.5 : 3.5) : slot === 0 ? -3.5 : slot === 1 ? 3.5 : 0;
+        const y = extra ? 1.85 : slot === 2 ? 3.68 : 1.85;
+        const w = extra ? 0.12 : slot === 2 ? 7.12 : 0.12;
+        const h = extra ? 3.7 : slot === 2 ? 0.12 : 3.7;
+        const corners = [[-1,1],[1,1],[1,-1],[-1,-1]];
+        const positions = geometry.getAttribute('position') as THREE.BufferAttribute;
+        for (let vertex = 0; vertex < 8; vertex++) {
+            const corner = vertex % 4;
+            const point = logoStrokes[index][corner];
+            const side = vertex < 4 ? 1 : -1;
+            const fromX = (point[0] - 250) * scale;
+            const fromY = 2.1 + (250 - point[1]) * scale;
+            // Open into separated straight strokes before arranging them in depth.
+            const openX = x * 0.65 + corners[corner][0] * w / 2;
+            const openY = y + corners[corner][1] * h / 2;
+            positions.setXYZ(vertex,
+                THREE.MathUtils.lerp(fromX, THREE.MathUtils.lerp(openX, x + corners[corner][0] * w / 2, settle), unfold),
+                THREE.MathUtils.lerp(fromY, openY, unfold),
+                THREE.MathUtils.lerp(4 + side * 0.04 - (index === 10 ? 0.006 : 0), THREE.MathUtils.lerp(4, z, settle) + side * 0.09, unfold));
+        }
+        positions.needsUpdate = true;
+        geometry.computeVertexNormals();
     });
+    return <mesh geometry={geometry} frustumCulled={false} castShadow={index !== 8}>
+        {index === 8
+            ? <meshBasicMaterial color="#e8b97e" toneMapped={false} side={THREE.DoubleSide} />
+            : <meshStandardMaterial color="#f1eee7" flatShading roughness={0.5} metalness={0.08} side={THREE.DoubleSide} />}
+    </mesh>;
+}
 
-    return <group ref={group} position={[4.85, 2.72, 7.1]} scale={0.64}>
-        {slices.map((index) => <mesh key={index} position={[0, (index - 3.5) * 0.39, 0]}>
-            <planeGeometry args={[3.15, 0.405]} />
-            <shaderMaterial ref={(material) => { if (material) materials.current[index] = material; }} transparent depthWrite={false}
-                uniforms={{ map: { value: logo }, opacity: { value: 1 }, sliceOffset: { value: index / 8 } }}
-                vertexShader={`varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`}
-                fragmentShader={`uniform sampler2D map; uniform float opacity; uniform float sliceOffset; varying vec2 vUv; void main(){ vec2 slicedUv = vec2(vUv.x, vUv.y / 8.0 + sliceOffset); vec4 source = texture2D(map, slicedUv); float gold = step(0.08, source.r - source.b); vec3 ink = mix(vec3(0.95, 0.94, 0.90), vec3(0.91, 0.68, 0.40), gold); gl_FragColor = vec4(ink, source.a * opacity); }`} />
-        </mesh>)}
-    </group>;
+function LogoBreak({ progress }: { progress: MotionValue<number> }) {
+    return <group>{logoStrokes.map((_, index) => <LogoStroke key={index} index={index} progress={progress} />)}</group>;
 }
 
 function Portal({ z, index }: { z: number; index: number }) {
@@ -60,15 +90,17 @@ function ProjectPlane({ texture, position, rotation, index, progress, start }: {
     const imageMaterial = useRef<THREE.MeshBasicMaterial>(null);
     const backingMaterial = useRef<THREE.MeshStandardMaterial>(null);
     useFrame(({ size }) => {
-        const local = THREE.MathUtils.smoothstep(THREE.MathUtils.clamp((progress.get() - start) / 0.25, 0, 1), 0, 1);
+        const p = progress.get();
+        const local = THREE.MathUtils.smoothstep(p, start, start + 0.10);
+        const fadeOut = index === 2 ? 1 : 1 - THREE.MathUtils.smoothstep(p, index === 0 ? 0.50 : 0.72, index === 0 ? 0.56 : 0.78);
         if (group.current) {
-            group.current.visible = local > 0.002;
+            group.current.visible = local * fadeOut > 0.002;
             group.current.position.y = position[1] + (1 - local) * 1.35;
             const responsiveScale = size.width < 600 ? 0.62 : 1;
             group.current.scale.setScalar((0.84 + local * 0.16) * responsiveScale);
         }
-        if (imageMaterial.current) imageMaterial.current.opacity = local;
-        if (backingMaterial.current) backingMaterial.current.opacity = local;
+        if (imageMaterial.current) imageMaterial.current.opacity = local * fadeOut;
+        if (backingMaterial.current) backingMaterial.current.opacity = local * fadeOut;
     });
     const image = texture.image as { width?: number; height?: number } | undefined;
     const aspect = image?.width && image?.height ? image.width / image.height : 1.6;
@@ -129,43 +161,60 @@ function SpatialFilm({ progress, still }: { progress: MotionValue<number>; still
     const slabs = useRef<THREE.Group>(null);
     const textures = useTexture([office, classicIndian, threeBhk]);
     textures.forEach((texture) => { texture.colorSpace = THREE.SRGBColorSpace; texture.anisotropy = 8; });
-    const cameraPath = useMemo(() => new THREE.CatmullRomCurve3([
-        new THREE.Vector3(7.2, 3.35, 10.5), new THREE.Vector3(4.8, 3.05, 6.2),
-        new THREE.Vector3(1.7, 2.55, 2.8), new THREE.Vector3(-1.25, 2.25, -1.1),
-        new THREE.Vector3(1.3, 2.15, -5.1), new THREE.Vector3(-1.1, 2.2, -9.1),
-        new THREE.Vector3(0.2, 2.3, -13.2),
-    ]), []);
-
-    useFrame(({ camera, pointer }, delta) => {
+    useFrame(({ camera, pointer, size }) => {
         const p = progress.get();
-        const travel = THREE.MathUtils.clamp((p - 0.12) / 0.88, 0, 1);
+        const travel = THREE.MathUtils.clamp((p - 0.34) / 0.66, 0, 1);
         const smooth = (v: number) => THREE.MathUtils.smoothstep(v, 0, 1);
         portals.current?.children.forEach((portal, i) => {
-            const resting = p < 0.12 ? 0 : i === 0 ? 0.82 : i === 1 ? 0.42 : 0;
-            const local = Math.max(resting, smooth(THREE.MathUtils.clamp((travel - i * 0.075) / 0.2, 0, 1)));
+            const local = smooth(THREE.MathUtils.clamp((p - 0.28 - i * 0.055) / 0.2, 0, 1));
+            portal.visible = local > 0.001;
             portal.scale.y = 0.04 + local * 0.96;
             portal.position.y = (1 - local) * -1.8;
             portal.rotation.z = (1 - local) * (i % 2 ? -0.08 : 0.08);
         });
         slabs.current?.children.forEach((slab, i) => {
+            slab.visible = p > 0.30 && p < 0.38;
             const local = smooth(THREE.MathUtils.clamp((travel - (0.1 + i * 0.08)) / 0.24, 0, 1));
             slab.position.x = (i % 2 ? 1 : -1) * (5.7 - local * 1.9);
             slab.rotation.z = (1 - local) * (i % 2 ? 0.12 : -0.12);
         });
 
-        const desired = cameraPath.getPointAt(Math.min(0.995, travel));
-        const target = cameraPath.getPointAt(Math.min(1, travel + 0.055));
-        if (!still) {
-            desired.x += pointer.x * 0.18;
-            desired.y += pointer.y * 0.1;
+        // Frame each complete image, including portrait screens, rather than
+        // looking along a tunnel tangent and passing beside the artwork.
+        const centers = [[-1.2, 1.85, -0.35], [1.15, 1.85, -6.25], [-1.1, 1.85, -12.25]];
+        const stops = centers.map((center, index) => {
+            const image = textures[index].image as { width: number; height: number };
+            const scale = size.width < 600 ? 0.62 : 1;
+            const halfWidth = (3.3 + 0.2) * scale / 2;
+            const halfHeight = (3.3 / (image.width / image.height) + 0.2) * scale / 2;
+            const tangent = Math.tan(THREE.MathUtils.degToRad(44 / 2));
+            const distance = Math.max(halfHeight / tangent, halfWidth / (tangent * size.width / size.height)) * 1.65;
+            return { position: new THREE.Vector3(center[0], center[1], center[2] + distance), target: new THREE.Vector3(...center) };
+        });
+        const intro = { position: new THREE.Vector3(0, 2.1, 10), target: new THREE.Vector3(0, 2.1, 4) };
+        const keys = [
+            { p: 0, ...intro }, { p: 0.30, ...intro },
+            { p: 0.42, ...stops[0] }, { p: 0.50, ...stops[0] },
+            { p: 0.64, ...stops[1] }, { p: 0.72, ...stops[1] },
+            { p: 0.86, ...stops[2] }, { p: 1, ...stops[2] },
+        ];
+        const next = keys.findIndex((key) => key.p >= p);
+        const upper = Math.max(1, next < 0 ? keys.length - 1 : next);
+        const a = keys[upper - 1], b = keys[upper];
+        const mix = smooth(THREE.MathUtils.clamp((p - a.p) / (b.p - a.p), 0, 1));
+        const desired = a.position.clone().lerp(b.position, mix);
+        const target = a.target.clone().lerp(b.target, mix);
+        if (!still && size.width >= 600) {
+            desired.x += pointer.x * 0.06;
+            desired.y += pointer.y * 0.04;
         }
-        camera.position.lerp(desired, 1 - Math.exp(-delta * 3.3));
-        camera.lookAt(target.x, target.y - 0.35, target.z);
+        camera.position.copy(desired);
+        camera.lookAt(target);
     });
 
     return <>
         <LogoBreak progress={progress} />
-        <group ref={portals}>{portalDepths.map((z, i) => <Portal key={z} z={z} index={i} />)}</group>
+        <group ref={portals}>{portalDepths.slice(3).map((z, i) => <Portal key={z} z={z} index={i + 3} />)}</group>
         <group>
             <ProjectPlane texture={textures[0]} position={[-1.2, 1.85, -0.35]} rotation={[0, 0.2, 0]} index={0} progress={progress} start={0.25} />
             <ProjectPlane texture={textures[1]} position={[1.15, 1.85, -6.25]} rotation={[0, -0.2, 0]} index={1} progress={progress} start={0.5} />
@@ -191,7 +240,7 @@ class SceneBoundary extends Component<{ children: ReactNode }, { failed: boolean
 }
 
 export function CubeScene({ progress, still = false }: { progress: MotionValue<number>; still?: boolean }) {
-    return <SceneBoundary><Canvas dpr={[1, 1.5]} shadows camera={{ position: [7.2, 3.35, 10.5], fov: 44, near: 0.1, far: 80 }} gl={{ antialias: true, powerPreference: 'high-performance', toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 0.95 }}>
+    return <SceneBoundary><Canvas dpr={[1, 2]} shadows camera={{ position: [0, 2.1, 10], fov: 44, near: 0.1, far: 80 }} gl={{ antialias: true, powerPreference: 'high-performance', toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 0.95 }}>
         <color attach="background" args={['#141b17']} />
         <fog attach="fog" args={['#141b17', 12, 30]} />
         <hemisphereLight args={['#d9ded5', '#08100b', 0.82]} />
